@@ -2,6 +2,10 @@ import pygame
 from Settings import *
 from Entity import *
 
+"""
+Une classe Player qui hérite de Entite, avec ses propres mouvements et sauts.
+"""
+
 class Player(Entite):
     def __init__(self, x, y, width=50, height=50, color=(255, 255, 255)):
         super().__init__(x, y, width, height, color)  # Appelle le constructeur de Entite

@@ -1,6 +1,10 @@
 import pygame
 from Settings import *
 
+"""
+Une classe Entite générique pour toutes les entités du jeu.
+"""
+
 class Entite:
     def __init__(self, x, y, width, height, color=(255, 255, 255)):
         self.rect = pygame.Rect(x, y, width, height)  # Rectangle représentant l'entité

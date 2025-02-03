@@ -2,6 +2,15 @@ import pygame, sys  # Bibliothèque pygame pour gérer le jeu, et sys pour gére
 from Settings import *  # Importation des paramètres prédéfinis
 from Level import *  # Importation du module Level, qui gère la carte et les entités
 from Player import *
+from Enemy import Monstre  # Importation de la classe Monstre
+
+
+
+"""
+CreateGame permet de lancer le jeu , il est la base centrale
+
+"""
+
 
 class CreateGame:
     def __init__(self):
@@ -10,6 +19,7 @@ class CreateGame:
         pygame.display.set_caption('Simple Platformer')
         self.clock = pygame.time.Clock()
         self.player = Player(100, HEIGHT - 100)  # Instance du joueur
+        self.monstre = Monstre(500, HEIGHT - 100)  # Instance d'un monstre
 
     def run(self):
         while True:
@@ -21,7 +31,11 @@ class CreateGame:
 
             self.screen.fill((0, 0, 0))  # Fond noir
             self.player.update(keys, GRAVITY, HEIGHT)  # Mise à jour du joueur
+            self.monstre.update(self.player, GRAVITY, HEIGHT)  # Mise à jour du monstre
+            
             self.player.draw(self.screen)  # Dessine le joueur
+            self.monstre.draw(self.screen)  # Dessine le monstre
+
             
             pygame.display.update()
             self.clock.tick(FPS)

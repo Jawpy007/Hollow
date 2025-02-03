@@ -1,4 +1,4 @@
-# Paramètres
+# Paramètres du jeu
 WIDTH, HEIGHT = 800, 600
 FPS = 60
 GRAVITY = 0.5
