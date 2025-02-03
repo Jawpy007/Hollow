@@ -25,4 +25,4 @@ class Entite:
 
     def draw(self, screen):
         """Dessine l'entité sur l'écran."""
-        pygame.draw.rect(screen, self.color, self.rect)
+        pygame.draw.rect(screen, self.color, self.rect) #A remplacer plus tard avec des import de texture personnalisé

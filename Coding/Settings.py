@@ -1,5 +1,5 @@
 # Paramètres du jeu
-WIDTH, HEIGHT = 800, 600
+WIDTH, HEIGHT = 1920, 1080
 FPS = 60
 GRAVITY = 0.5
 JUMP_STRENGTH = -10
