@@ -3,6 +3,21 @@ import pygame
 import math
 from Entity import Entite
 
+
+
+
+"""
+Post-it pour ameliorer le spectre :
+
+calcule de la position de fin en fonction d'une symetrie axiale par rapport au jour , par exemple :   pos_fin = start_pos + 2 * ('distance entre start_pos et le joueur)
+
+
+
+
+"""
+
+
+
 class Spectre(Entite):
     def __init__(self, x, y, width=50, height=50, color=(128, 0, 128), speed=2, detection_radius=500):
         super().__init__(x, y, width, height, color)
