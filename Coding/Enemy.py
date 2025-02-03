@@ -1,4 +1,5 @@
 import pygame
+import math
 from Entity import Entite
 
 class Monstre(Entite):
@@ -11,12 +12,18 @@ class Monstre(Entite):
         """Fait suivre le joueur par le monstre s'il est à portée."""
         dx = player.rect.centerx - self.rect.centerx  # Distance horizontale
         distance = abs(dx)  # Distance absolue
-
         if distance < self.detection_radius:  # Si le joueur est dans la zone de détection
             if dx > 0:
                 self.rect.x += self.speed  # Se déplace à droite
             elif dx < 0:
                 self.rect.x -= self.speed  # Se déplace à gauche
+
+    def distance_player(self,player):
+        """Retourne la distance du mob au joueur."""
+        dx = player.rect.centerx - self.rect.centerx
+        dy = player.rect.centery - self.rect.centery
+        distance = math.sqrt(dx**2 + dy**2) #Potit pythagore 
+        return distance
 
     def update(self, player, gravity, ground_height):
         """Met à jour le monstre (déplacement vers le joueur + gravité)."""
