@@ -1,0 +1,14 @@
+# game setup
+WIDTH    = 1280	#Largeur
+HEIGTH   = 720 #Longueur
+FPS      = 60 #IPS
+TILESIZE = 64 # dimension des sprites
+
+#Player setup
+PLAYERSPEED=5
+JUMPTIME=200
+JUMPMAX= 2
+BASE_PLAYER_HEALTH=100
+BASE_PLAYER_ENERGY=100
+BASE_PLAYER_XP=0
+ATTACK_COOLDOWN=400
