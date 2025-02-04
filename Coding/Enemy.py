@@ -1,6 +1,7 @@
 import pygame
 import math
 from Entity import Entite
+from Settings import *
 
 class Monstre(Entite):
     def __init__(self, x, y, width=50, height=50, color=(255, 0, 0), speed=2, detection_radius=200):
@@ -14,9 +15,9 @@ class Monstre(Entite):
         distance = abs(dx)  # Distance absolue
         if distance < self.detection_radius:  # Si le joueur est dans la zone de détection
             if dx > 0:
-                self.rect.x += self.speed  # Se déplace à droite
+                self.direction.x += 0.9  # Se déplace à droite
             elif dx < 0:
-                self.rect.x -= self.speed  # Se déplace à gauche
+                self.direction.x -= 0.9  # Se déplace à gauche
 
     def distance_player(self,player):
         """Retourne la distance du mob au joueur."""
@@ -27,5 +28,7 @@ class Monstre(Entite):
 
     def update(self, player, gravity, ground_height):
         """Met à jour le monstre (déplacement vers le joueur + gravité)."""
-        self.follow_player(player)
-        self.apply_gravity(gravity, ground_height)
+        self.direction=pygame.math.Vector2()
+        self.follow_player()
+        self.apply_gravity()
+        self.move()
