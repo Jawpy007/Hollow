@@ -18,9 +18,7 @@ class CreateGame:
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
         pygame.display.set_caption('Simple Platformer')
         self.clock = pygame.time.Clock()
-        self.player = Player(100, HEIGHT - 100)  # Instance du joueur
-        self.monstre = Monstre(500, HEIGHT - 100)  # Instance d'un monstre
-        self.spectre = Spectre(400,500) #Instance d'un spectre
+        self.game_level= CreateLevel("game_level", self.screen)
         
 
     def run(self):
@@ -32,15 +30,7 @@ class CreateGame:
                     sys.exit()
 
             self.screen.fill((0, 0, 0))  # Fond noir
-            self.player.update(keys, GRAVITY, HEIGHT)  # Mise à jour du joueur
-            self.monstre.update(self.player, GRAVITY, HEIGHT)  # Mise à jour du monstre
-            self.spectre.update(self.player, GRAVITY, HEIGHT) #Mise a jour du spectre
-            
-            self.player.draw(self.screen)  # Dessine le joueur
-            self.monstre.draw(self.screen)  # Dessine le monstre
-            self.spectre.draw(self.screen) # Dessine le spectre
-
-            
+            self.game_level.run(keys)
             pygame.display.update()
             self.clock.tick(FPS)
 
