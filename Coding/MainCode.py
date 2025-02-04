@@ -30,7 +30,7 @@ class CreateGame:
                     sys.exit()
 
             self.screen.fill((0, 0, 0))  # Fond noir
-            self.game_level.run(keys)
+            self.game_level.run()
             pygame.display.update()
             self.clock.tick(FPS)
 

@@ -3,7 +3,7 @@ from Settings import *  # Importation des paramètres prédéfinis
 from Player import *
 from Enemy import Monstre  # Importation de la classe Monstre
 from Spectre import Spectre  # Import de classe Spectre
-
+from tile import *
 
 
 class CreateLevel():

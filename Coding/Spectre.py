@@ -15,10 +15,12 @@ calcule de la position de fin en fonction d'une symetrie axiale par rapport au j
 
 
 class Spectre(Entite):
-    def __init__(self, x, y, width=50, height=50, color=(128, 0, 128), speed=2, detection_radius=528):
-        super().__init__(x, y, width, height, color)
+    def __init__(self, x, y, groups, player,obs_groups, width=50, height=50, color=(128, 0, 128), speed=2, detection_radius=528):
+        super().__init__(x, y, width, height, groups,obs_groups,color)
         self.speed = speed  # Vitesse de déplacement en mode idle
         self.detection_radius = detection_radius  # Rayon de détection du joueur
+        self.plyaer=player
+        self.direction = pygame.math.Vector2()
 
         # États possibles : "idle", "attack", "return", "waiting"
         self.state = "idle"
@@ -58,8 +60,6 @@ class Spectre(Entite):
         else:
             self.end_pos = (self.start_pos[0] - self.distance_player(player) , self.start_pos[1])
             
-        print("Position x",self.end_pos[0])
-        print("Position y",self.end_pos[1])
 
     def update_attack(self):
         """Met à jour la position du spectre selon une trajectoire courbée."""
@@ -109,11 +109,11 @@ class Spectre(Entite):
         if self.rect.right > 1920 or self.rect.left < 0: # A changer car si il depasse cette zone il bug un po
             self.speed = -self.speed
 
-    def update(self, player, gravity, ground_height):
+    def update(self):
         """Gère les mises à jour en fonction de l'état."""
         if self.state == "idle":
-            if self.detect_player(player):
-                self.start_attack(player)
+            if self.detect_player(self.plyaer):
+                self.start_attack(self.plyaer)
             else:
                 self.idle_behavior()
 

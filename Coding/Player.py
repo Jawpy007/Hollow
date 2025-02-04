@@ -26,9 +26,9 @@ class Player(Entite):
 	def input(self):
 		self.direction=pygame.math.Vector2()
 		keys = pygame.key.get_pressed()
-		if keys[pygame.K_q]:
+		if keys[pygame.K_q] and not self.walljump:
 			self.direction.x+=-1
-		if keys[pygame.K_d]:
+		if keys[pygame.K_d] and not self.walljump:
 			self.direction.x+=1
 		if keys[pygame.K_SPACE] and self.jump_count>0 and not self.spacebar_block:  # Saut seulement si au sol
 			self.walljump=None
@@ -44,9 +44,9 @@ class Player(Entite):
 	
 	def collision_event(self, CollisionType):
 		if "gauche" in CollisionType and "bas" not in CollisionType and not self.walljump:
-			#self.walljump="gauche"
+			self.walljump="gauche"
 			self.walljump_time=pygame.time.get_ticks()
-			#self.jump_count=2
+			self.jump_count=1
 
 		if self.walljump and "gauche" not in CollisionType:
 			self.walljump=None
@@ -71,8 +71,9 @@ class Player(Entite):
 				self.direction.y=-1
 				self.rect.y += self.direction.y * SPEED
 				CollisionType+=[self.collision("y")]
-
-		elif self.walljump:
+				
+		if self.walljump:
+			#declenchement intentionnel d'une colision pour verifier que le joueur est toujours accrocher a un mur
 			if self.walljump=="gauche":
 				self.direction.x=-1
 			else:
@@ -80,10 +81,9 @@ class Player(Entite):
 			self.rect.x += self.direction.x
 			CollisionType+=[self.collision("x")]
 
-			self.direction.y=-5
+			self.direction.y=1
 			self.rect.y += self.direction.y
 			CollisionType+=[self.collision("y")]
-	
 		return CollisionType
 
 	def apply_gravity(self):
