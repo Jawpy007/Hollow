@@ -22,6 +22,7 @@ class Player(Entite):
 		self.in_jump=False
 		self.in_jump_time =pygame.time.get_ticks()
 		self.spacebar_block=False
+		self.stats={"hp":{"value":10,"max_value":100}}
 
 	def input(self):
 		self.direction=pygame.math.Vector2()
@@ -38,6 +39,7 @@ class Player(Entite):
 			self.spacebar_block=True
 		if not keys[pygame.K_SPACE]:
 			self.spacebar_block=False
+			
 
 
 			
@@ -100,10 +102,16 @@ class Player(Entite):
 		if self.in_jump and self.current_time - self.in_jump_time > JUMP_COOLDOWN:
 			self.in_jump=False
 				
-		
+	def stats_update(nom_stats,value_update,max_update=None):
+		if max_update:
+			self.stats[nom_stats]["max"]+=max_update
+		if value_update:
+			self.stats[nom_stats]["value"]+=max_update
+		pass
 
 	def update(self):
 		"""Met à jour le joueur (mouvement + gravité)."""
+		print(self.caca)
 		self.input()
 		self.apply_gravity()
 		CollisionType=self.move()
