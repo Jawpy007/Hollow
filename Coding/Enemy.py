@@ -19,24 +19,20 @@ class Monstre(Entite):
         distance = math.sqrt(dx**2 + dy**2)  # Calculer la distance
 
         if distance < self.detection_radius:  # Si le joueur est dans la zone de détection
-<<<<<<< HEAD
-            if dx > 32:
-                self.direction.x += 0.5  # Se déplace à droite
-            elif dx < -32:
-                self.direction.x -= 0.5  # Se déplace à gauche
-            elif 32>=dx>0:
-                self.attack([self.player], self.rect.x+TILE_SIZE, self.rect.y, 1, (TILE_SIZE,TILE_SIZE))
-            elif -32<=dx<=0:
-                self.attack([self.player], self.rect.x-TILE_SIZE, self.rect.y, 1, (TILE_SIZE,TILE_SIZE))
-=======
-            self.direction.x = dx / distance  # Normalisation du vecteur de direction
-            self.direction.y = dy / distance  # Permet un suivi plus fluide du joueur
+            if distance > TILE_SIZE or distance <-TILE_SIZE:
+                self.direction.x = dx / distance  # Normalisation du vecteur de direction
+                self.direction.y = dy / distance  # Permet un suivi plus fluide du joueur
         else:
             self.direction = pygame.math.Vector2()  # Stopper le mouvement
 
+        if 32>=dx>0:
+            self.attack([self.player], self.rect.x+TILE_SIZE, self.rect.y, 1, (TILE_SIZE,TILE_SIZE))
+        elif -32<=dx<=0:
+            self.attack([self.player], self.rect.x-TILE_SIZE, self.rect.y, 1, (TILE_SIZE,TILE_SIZE))
 
 
->>>>>>> 1e2de36c9069d6cef7354b5d9489205bec62e8b0
+
+
     def distance_player(self):
         """Retourne la distance du mob au joueur."""
         dx = self.player.rect.centerx - self.rect.centerx

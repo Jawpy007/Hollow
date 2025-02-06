@@ -1,14 +1,14 @@
 # Paramètres du jeu
 WIDTH, HEIGHT = 1280, 720 #Longueur
 FPS = 60
-GRAVITY = 2.2
+GRAVITY = 1.8
 TILE_SIZE=32
 
 
 
 
 #player
-JUMP_STRENGTH = -20
+PLAYER_JUMP_MULTIPLICATOR  = 3
 PLAYER_SPEED_MULTIPLICATOR = 5
 WALL_JUMP_X_SPEED_MULTIPLICATOR=2
 WALL_JUMP_COOLDOWN=200
@@ -37,9 +37,9 @@ Ci dessous la carte, voici la legende :
 """
 WORLD_MAP = [
 ['x','x','x','x','x','x','x','x','x','x','x','x','x','x','x','x','x','x','x','x'],
-['x','m',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','x'],
-['x',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','x','x'],
-['climp_wall_g',' ',' ',' ','climp_wall_r',' ',' ',' ',' ','x','x','x','x','x',' ',' ',' ',' ',' ','x'],
+['climp_wall_g','m',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','x'],
+['climp_wall_g',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','x','x'],
+['climp_wall_g',' ',' ',' ','climp_wall_r','x','x','x','x','x','x',' ','x','x',' ',' ',' ',' ',' ','x'],
 ['climp_wall_g',' ',' ',' ','climp_wall_r',' ',' ',' ',' ',' ',' ',' ',' ','x',' ',' ',' ',' ',' ','x'],
 ['climp_wall_g',' ',' ',' ','climp_wall_r',' ',' ',' ',' ',' ',' ',' ',' ','x',' ',' ',' ',' ',' ','x'],
 ['climp_wall_g',' ',' ',' ','climp_wall_r',' ',' ',' ',' ',' ',' ',' ',' ','x',' ',' ',' ',' ',' ','x'],

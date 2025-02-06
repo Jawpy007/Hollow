@@ -68,11 +68,23 @@ class Entite(pygame.sprite.Sprite):
 			self.stats[nom_stats]["value"]=value_update
 			print(self,self.stats[nom_stats]["value"])
 
-	def attack(self, eni_groups,x,y,value,size=(TILE_SIZE,TILE_SIZE)):
-		hitbox=CreateHitbox(x,y,size)
+	def attack(self, eni_groups, x, y, value, size=(TILE_SIZE, TILE_SIZE)):
+		# eni_groups : Liste ou groupe d'ennemis (sprites) que l'attaque va affecter.
+		# x : Position horizontale (en pixels) où l'attaque se produit (coordonnée en x).
+		# y : Position verticale (en pixels) où l'attaque se produit (coordonnée en y).
+		# value : Valeur des dégâts.
+		# size : Taille de la hitbox de l'attaque, définie par défaut à TILE_SIZE (par exemple, taille de la tuile de jeu).
+		
+		# Crée une boîte de collision (hitbox) à la position (x, y) avec la taille spécifiée
+		hitbox = CreateHitbox(x, y, size)
+		
+		# Parcourt tous les éléments (sprites) dans le groupe des ennemis (eni_groups)
 		for sprite in eni_groups:
+			# Vérifie si la hitbox de l'attaque entre en collision avec le sprite de l'ennemi
 			if hitbox.rect.colliderect(sprite):
+				# Si collision, met à jour les statistiques de l'ennemi (ici, l'HP) en fonction de la valeur de l'attaque
 				sprite.stats_update("hp", value)
+
 	
 class CreateHitbox(pygame.sprite.Sprite):
 	def __init__(self,x, y, size=(TILE_SIZE,TILE_SIZE)):

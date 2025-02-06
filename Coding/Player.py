@@ -63,7 +63,7 @@ class Player(Entite):
 			self.walljump=None
 
 		if keys[pygame.K_e]:
-			self.attack(self.eni_groups, self.rect.x+TILE_SIZE, self.rect.y, 10, (TILE_SIZE,TILE_SIZE))
+			self.attack(self.eni_groups, self.rect.x+TILE_SIZE, self.rect.y, -10, (TILE_SIZE,TILE_SIZE))
 
 	
 
@@ -120,7 +120,7 @@ class Player(Entite):
 			self.collision("x")
 			for i in range(2):
 				self.direction.y=-1
-				self.rect.y += self.direction.y * PLAYER_SPEED_MULTIPLICATOR
+				self.rect.y += self.direction.y * PLAYER_JUMP_MULTIPLICATOR
 				self.collision("y")
 				
 		elif self.walljump!=None:
