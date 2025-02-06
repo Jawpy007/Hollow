@@ -7,6 +7,7 @@ Une classe Entite générique pour toutes les entités du jeu.
 
 class Entite(pygame.sprite.Sprite):
 	def __init__(self, x, y, width, height, groups,obs_groups, color=(255, 255, 255),  surface=None):
+		print(groups)
 		super().__init__(groups) #Initialisation de la classe parent
 		self.image = pygame.Surface((width, height))
 		self.image.fill(color)
