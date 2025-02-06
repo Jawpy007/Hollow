@@ -16,6 +16,7 @@ class CreateLevel():
 			self.obstacles_sprites = pygame.sprite.Group() #Sprite non Visible par le joueur exemple Hit-Box
 			self.enemy_sprites = pygame.sprite.Group() #Sprite non Visible par le joueur exemple Hit-Box
 			self.items_sprites= pygame.sprite.Group()
+			self.climp_zone=pygame.sprite.Group()
 
 
 			self.screen=Screen
@@ -23,8 +24,9 @@ class CreateLevel():
 	
 	def create_map(self,Map):
 		img= pygame.image.load('Coding/graphics/tilemap/ground/stone.png').convert()
+		img_climp= pygame.image.load('Coding/graphics/tilemap/ground/climbable wall.png').convert()
 		self.tiles_liste=[]
-		self.player = Player(0, 0, self.visible_sprites, self.enemy_sprites, self.obstacles_sprites)  # Instance du joueur
+		self.player = Player(0, 0, self.visible_sprites, self.enemy_sprites, self.obstacles_sprites, self.climp_zone)  # Instance du joueur
 		for LigneIndex, Ligne in enumerate(Map):
 			for ColIndex, Col in enumerate(Ligne):
 				if Col!=VOID_CHR:
@@ -34,12 +36,15 @@ class CreateLevel():
 						self.player.rect.x=x
 						self.player.rect.y=y
 					elif Col=="m":
-						self.monstre = Monstre(x, y, [self.visible_sprites,self.enemy_sprites], self.player, self.obstacles_sprites)  # Instance d'un monstre
+						Monstre(x, y, [self.visible_sprites,self.enemy_sprites], self.player, self.obstacles_sprites)  # Instance d'un monstre
 					elif Col=="s":
-						self.spectre = Spectre(x, y, [self.visible_sprites,self.enemy_sprites], self.player, self.obstacles_sprites) #Instance d'un spectre
+						Spectre(x, y, [self.visible_sprites,self.enemy_sprites], self.player, self.obstacles_sprites) #Instance d'un spectre
 					elif Col=="x":
-						self.tiles_liste +=[CreateTiles(x, y, [self.visible_sprites,self.obstacles_sprites], img)]
-
+						CreateTiles(x, y, [self.visible_sprites,self.obstacles_sprites], img)
+					elif Col=="climp_wall_r":
+						CreateTiles(x, y, [self.visible_sprites,self.obstacles_sprites,self.climp_zone], img_climp, Col)
+					elif Col=="climp_wall_g":
+						CreateTiles(x, y, [self.visible_sprites,self.obstacles_sprites,self.climp_zone], img_climp, Col)
 	def run(self):
 		self.visible_sprites.custom_draw(self.player)
 		self.visible_sprites.update()
