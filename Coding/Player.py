@@ -111,7 +111,6 @@ class Player(Entite):
 
 	def update(self):
 		"""Met à jour le joueur (mouvement + gravité)."""
-		print(self.caca)
 		self.input()
 		self.apply_gravity()
 		CollisionType=self.move()
