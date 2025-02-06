@@ -4,6 +4,7 @@ from Player import *
 from Enemy import Monstre  # Importation de la classe Monstre
 from Spectre import Spectre  # Import de classe Spectre
 from tile import *
+from Craspeau import *
 
 
 class CreateLevel():
@@ -39,7 +40,6 @@ class CreateLevel():
 						self.spectre = Spectre(x, y, [self.visible_sprites,self.enemy_sprites], self.player, self.obstacles_sprites) #Instance d'un spectre
 					elif Col=="x":
 						self.tiles_liste +=[CreateTiles(x, y, [self.visible_sprites,self.obstacles_sprites], img)]
-
 	def run(self):
 		self.visible_sprites.custom_draw(self.player)
 		self.visible_sprites.update()

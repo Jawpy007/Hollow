@@ -19,7 +19,7 @@ class Spectre(Entite):
         super().__init__(x, y, width, height, groups,obs_groups,color)
         self.speed = speed  # Vitesse de déplacement en mode idle
         self.detection_radius = detection_radius  # Rayon de détection du joueur
-        self.plyaer=player
+        self.player=player
         self.direction = pygame.math.Vector2()
 
         # États possibles : "idle", "attack", "return", "waiting"
@@ -112,8 +112,8 @@ class Spectre(Entite):
     def update(self):
         """Gère les mises à jour en fonction de l'état."""
         if self.state == "idle":
-            if self.detect_player(self.plyaer):
-                self.start_attack(self.plyaer)
+            if self.detect_player(self.player):
+                self.start_attack(self.player)
             else:
                 self.idle_behavior()
 
