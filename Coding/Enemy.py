@@ -4,8 +4,8 @@ from Entity import Entite
 from Settings import *
 
 class Monstre(Entite):
-    def __init__(self, x, y, groups, player,obs_groups, width=50, height=50, color=(255, 0, 0), speed=2, detection_radius=((200))):
-        super().__init__(x, y, width, height, groups,obs_groups,color)
+    def __init__(self, x, y, groups, player,obs_groups, color=(255, 0, 0), speed=2, detection_radius=((200))):
+        super().__init__(x, y, groups,obs_groups,color=color)
         self.speed = speed  # Vitesse de déplacement de l'ennemi
         self.detection_radius = detection_radius  # Rayon de détection du joueur
         self.player=player
@@ -17,11 +17,14 @@ class Monstre(Entite):
         dx = self.player.rect.centerx - self.rect.centerx  # Distance horizontale
         distance = abs(dx)  # Distance absolue
         if distance < self.detection_radius:  # Si le joueur est dans la zone de détection
-            if dx > 0:
-                self.direction.x += 0.9  # Se déplace à droite
-            elif dx < 0:
-                self.direction.x -= 0.9  # Se déplace à gauche
-
+            if dx > 32:
+                self.direction.x += 0.5  # Se déplace à droite
+            elif dx < -32:
+                self.direction.x -= 0.5  # Se déplace à gauche
+            elif 32>=dx>0:
+                self.attack([self.player], self.rect.x+TILE_SIZE, self.rect.y, 1, (TILE_SIZE,TILE_SIZE))
+            elif -32<=dx<=0:
+                self.attack([self.player], self.rect.x-TILE_SIZE, self.rect.y, 1, (TILE_SIZE,TILE_SIZE))
     def distance_player(self):
         """Retourne la distance du mob au joueur."""
         dx = self.player.rect.centerx - self.rect.centerx

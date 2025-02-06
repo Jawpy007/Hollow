@@ -15,8 +15,8 @@ calcule de la position de fin en fonction d'une symetrie axiale par rapport au j
 
 
 class Spectre(Entite):
-    def __init__(self, x, y, groups, player,obs_groups, width=50, height=50, color=(128, 0, 128), speed=2, detection_radius=528):
-        super().__init__(x, y, width, height, groups,obs_groups,color)
+    def __init__(self, x, y, groups, player,obs_groups, color=(128, 0, 128), speed=2, detection_radius=528):
+        super().__init__(x, y,groups,obs_groups,color=color)
         self.speed = speed  # Vitesse de déplacement en mode idle
         self.detection_radius = detection_radius  # Rayon de détection du joueur
         self.player=player
