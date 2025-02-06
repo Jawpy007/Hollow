@@ -18,7 +18,7 @@ class CreateGame:
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
         pygame.display.set_caption('Simple Platformer')
         self.clock = pygame.time.Clock()
-        self.game_level= CreateLevel("game_level", self.screen)
+        self.game_level= CreateLevel("game_level", self.screen, self)
         
 
     def run(self):

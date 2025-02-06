@@ -33,6 +33,10 @@ class Player(Entite):
 
 		self.spacebar_block=False
 
+		self.player_level=1
+
+		self.stats["mana"]={"value":10,"max_value":100}
+		self.stats["xp"]={"value":0,"max_value":100}
 
 
 	def import_player_assets(self):
@@ -195,6 +199,42 @@ class Player(Entite):
 						self.rect.top = sprite.rect.bottom #on va en bas du sprite avec le quel on est entrée en collision 
 						self.CollisionType+=["haut]"]
 
+	def death(self):
+		print("mort")
+
+	def player_level_up(self, value=1):
+		self.player_xp_level+=value
+
+	def stats_update(self, nom_stats, value_update, max_value=None):
+		if max_value is not None:
+			self.stats[nom_stats]["max_value"] = max_value
+
+		current_value = self.stats[nom_stats]["value"]
+		max_value = self.stats[nom_stats]["max_value"]
+	
+		if value_update + current_value > max_value:
+			if nom_stats == "hp":
+				self.stats[nom_stats]["value"] = max_value
+			elif nom_stats == "mana":
+				self.stats[nom_stats]["value"] = max_value
+			elif nom_stats == "xp":
+				self.stats[nom_stats]["value"] = 0
+				self.player_level_up()
+
+		elif value_update + current_value <= 0:
+			if nom_stats == "hp":
+				self.stats[nom_stats]["value"] = 0
+				self.death()
+			elif nom_stats == "mana":
+				return False
+			elif nom_stats == "xp":
+				reste = value_update + current_value
+				self.stats[nom_stats]["value"] = max_value
+				self.player_level_up(-1)
+				self.stats_update("xp", reste)
+		else:
+			self.stats[nom_stats]["value"]+=value_update
+		return True
 
 	def update(self):
 		"""Met à jour le joueur (mouvement + gravité)."""

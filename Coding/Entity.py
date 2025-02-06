@@ -54,12 +54,27 @@ class Entite(pygame.sprite.Sprite):
 						CollisionType="haut" 
 		return CollisionType
 	
-	def stats_update(self,nom_stats,value_update,max_update=None):
-		if max_update:
-			self.stats[nom_stats]["max"]+=max_update
-		if value_update:
+	def death(self):
+		print("eni mort")
+
+	def stats_update(self, nom_stats, value_update, max_value=None):
+		if max_value is not None:
+			self.stats[nom_stats]["max_value"] = max_value
+
+		current_value = self.stats[nom_stats]["value"]
+		max_value = self.stats[nom_stats]["max_value"]
+	
+		if value_update + current_value > max_value:
+			if nom_stats == "hp":
+				self.stats[nom_stats]["value"] = max_value
+
+		elif value_update + current_value <= 0:
+			if nom_stats == "hp":
+				self.stats[nom_stats]["value"] = 0
+				self.death()
+
 			self.stats[nom_stats]["value"]+=value_update
-			print(self,self.stats[nom_stats]["value"])
+		return True
 
 	def stats_set(self,nom_stats,value_update,max_update=None):
 		if max_update:

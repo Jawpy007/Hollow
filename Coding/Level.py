@@ -5,10 +5,10 @@ from Enemy import Monstre  # Importation de la classe Monstre
 from Spectre import Spectre  # Import de classe Spectre
 from tile import *
 from Craspeau import *
-
+from Ui import UI
 
 class CreateLevel():
-	def __init__(self,LevelName,Screen):
+	def __init__(self,LevelName,Screen, game):
 		self.level_name=LevelName
 		if self.level_name=="game_level":
 
@@ -19,7 +19,7 @@ class CreateLevel():
 			self.items_sprites= pygame.sprite.Group()
 			self.climp_zone=pygame.sprite.Group()
 
-
+			self.ui=UI("game_level", game)
 			self.screen=Screen
 			self.create_map(WORLD_MAP)
 	
@@ -49,6 +49,7 @@ class CreateLevel():
 	def run(self):
 		self.visible_sprites.custom_draw(self.player)
 		self.visible_sprites.update()
+		self.ui.display(self.player)
 		
 
 class YSortCameraGroup(pygame.sprite.Group):

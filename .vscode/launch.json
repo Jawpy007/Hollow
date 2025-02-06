@@ -1,0 +1,12 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python Debugger: MainCode",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/Coding/MainCode.py",
+            "console": "integratedTerminal"
+        }
+    ]
+}
