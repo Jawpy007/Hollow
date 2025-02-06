@@ -10,17 +10,21 @@ class Monstre(Entite):
         self.detection_radius = detection_radius  # Rayon de détection du joueur
         self.player=player
         self.direction = pygame.math.Vector2()
-        
+
 
     def follow_player(self):
         """Fait suivre le joueur par le monstre s'il est à portée."""
         dx = self.player.rect.centerx - self.rect.centerx  # Distance horizontale
-        distance = abs(dx)  # Distance absolue
+        dy = self.player.rect.centery - self.rect.centery  # Distance verticale
+        distance = math.sqrt(dx**2 + dy**2)  # Calculer la distance
+
         if distance < self.detection_radius:  # Si le joueur est dans la zone de détection
-            if dx > 0:
-                self.direction.x += 0.9  # Se déplace à droite
-            elif dx < 0:
-                self.direction.x -= 0.9  # Se déplace à gauche
+            self.direction.x = dx / distance  # Normalisation du vecteur de direction
+            self.direction.y = dy / distance  # Permet un suivi plus fluide du joueur
+        else:
+            self.direction = pygame.math.Vector2()  # Stopper le mouvement
+
+
 
     def distance_player(self):
         """Retourne la distance du mob au joueur."""
