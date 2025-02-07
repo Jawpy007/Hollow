@@ -34,9 +34,13 @@ class Player(Entite):
 		self.spacebar_block=False
 
 		self.player_level=1
+		self.d_block=False
+		self.q_block=False
 
 		self.stats["mana"]={"value":10,"max_value":100}
 		self.stats["xp"]={"value":0,"max_value":100}
+
+		self.running=False
 
 
 	def import_player_assets(self):
@@ -47,10 +51,11 @@ class Player(Entite):
 		self.direction=pygame.math.Vector2()
 		keys = pygame.key.get_pressed()
 
-		if (keys[pygame.K_q] and not self.walljump) or self.wall_jump_jump_left:
+		print( self.q_block)
+		if ((keys[pygame.K_q] and not self.walljump) or  self.wall_jump_jump_left ) and not self.wall_jump_jump_right:
 			self.direction.x+=-1
 
-		if (keys[pygame.K_d] and not self.walljump) or self.wall_jump_jump_right:
+		if ((keys[pygame.K_d] and not self.walljump) or  self.wall_jump_jump_right) and not self.wall_jump_jump_left:
 			self.direction.x+=1
 
 		if keys[pygame.K_SPACE] and self.jump_count>0 and not self.spacebar_block:  # Saut seulement si au sol
@@ -69,16 +74,17 @@ class Player(Entite):
 		if keys[pygame.K_e]:
 			self.attack(self.eni_groups, self.rect.x+TILE_SIZE, self.rect.y, -10, (TILE_SIZE,TILE_SIZE))
 
-	
+		
+		self.running=keys[pygame.K_LSHIFT]
 
 
 
 		if not keys[pygame.K_SPACE]:
 			self.spacebar_block=False
 		if not keys[pygame.K_d]:
-			pass
+			self.d_block=False
 		if not keys[pygame.K_q]:
-			pass
+			self.q_block=False
 	
 
 	def collision_event(self):
@@ -92,6 +98,8 @@ class Player(Entite):
 			self.wall_jump_jump_right=False
 			self.wall_jump_jump_left=False
 
+			self.q_block=True
+
 		
 		elif "climp_droite" in self.CollisionType and not self.walljump and (keys[pygame.K_d] or self.wall_jump_jump_right) and self.lastwalljump!="droite":
 			self.walljump="droite"
@@ -101,6 +109,8 @@ class Player(Entite):
 			self.lastwalljump="droite"
 			self.wall_jump_jump_right=False
 			self.wall_jump_jump_left=False
+
+			self.d_block=True
 
 		elif (self.walljump=="gauche" and "climp_gauche" not in self.CollisionType  )or (self.walljump=="droite"  and "climp_droite" not in self.CollisionType):
 			self.walljump=None
@@ -112,16 +122,26 @@ class Player(Entite):
 		self.CollisionType=[]
 		self.collision("climp_zone")
 		if self.walljump==None and not self.in_jump:
-			self.rect.x += self.direction.x * PLAYER_SPEED_MULTIPLICATOR
-			self.collision("x")
+			if self.running:
+				self.rect.x += self.direction.x * PLAYER_RUNNING_SPEED_MULTIPLICATOR
+				self.collision("x")
+			else:
+				self.rect.x += self.direction.x * PLAYER_SPEED_MULTIPLICATOR
+				self.collision("x")
 			self.rect.y += self.direction.y * PLAYER_SPEED_MULTIPLICATOR
 			self.collision("y")
 
 		elif self.in_jump and self.walljump==None:
 			if self.wall_jump_jump_right or self.wall_jump_jump_left:
 				self.direction.x =self.direction.x * WALL_JUMP_X_SPEED_MULTIPLICATOR
-			self.rect.x += self.direction.x * PLAYER_SPEED_MULTIPLICATOR
-			self.collision("x")
+				self.rect.x += self.direction.x * PLAYER_SPEED_MULTIPLICATOR
+				self.collision("x")
+			elif self.running:
+				self.rect.x += self.direction.x * PLAYER_RUNNING_SPEED_MULTIPLICATOR
+				self.collision("x")
+			else:
+				self.rect.x += self.direction.x * PLAYER_SPEED_MULTIPLICATOR
+				self.collision("x")
 			for i in range(2):
 				self.direction.y=-1
 				self.rect.y += self.direction.y * PLAYER_JUMP_MULTIPLICATOR
