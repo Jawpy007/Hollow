@@ -38,20 +38,40 @@ class Player(Entite):
 		self.stats["mana"]={"value":10,"max_value":100}
 		self.stats["xp"]={"value":0,"max_value":100}
 
+		self.dashing=False
+
+		self.running=False
+
+		self.player_xp_level=1
+
+		self.dashing_last=[False, pygame.time.get_ticks()]
+
+		self.K_d_doubletap=[pygame.time.get_ticks() ,pygame.time.get_ticks()]
+		self.K_q_doubletap=[pygame.time.get_ticks() ,pygame.time.get_ticks()] #time de la derniere press et time du dernier lacher
+
+		self.player_image_dash = pygame.image.load("Coding/graphics/player/dash.png")  
+		self.player_image = pygame.Surface((TILE_SIZE,TILE_SIZE))
 
 	def import_player_assets(self):
 		pass
-
 
 	def input(self):
 		self.direction=pygame.math.Vector2()
 		keys = pygame.key.get_pressed()
 
 		if (keys[pygame.K_q] and not self.walljump) or self.wall_jump_jump_left:
+			if 	self.current_time -self.K_q_doubletap[0]<200 and self.current_time -self.K_q_doubletap[1]<200 and not self.q_key_block and self.current_time -self.lastwalljump_cooldown>700:
+				self.dashing=True
 			self.direction.x+=-1
+			self.K_q_doubletap[0]=pygame.time.get_ticks()
+			self.q_key_block=True
 
 		if (keys[pygame.K_d] and not self.walljump) or self.wall_jump_jump_right:
+			if 	self.current_time -self.K_d_doubletap[0]<200 and self.current_time -self.K_d_doubletap[1]<200 and not self.d_key_block and self.current_time -self.lastwalljump_cooldown>700:
+				self.dashing=True
 			self.direction.x+=1
+			self.K_d_doubletap[0]=pygame.time.get_ticks()
+			self.d_key_block=True
 
 		if keys[pygame.K_SPACE] and self.jump_count>0 and not self.spacebar_block:  # Saut seulement si au sol
 			if self.walljump=="droite":
@@ -66,20 +86,30 @@ class Player(Entite):
 			self.spacebar_block=True
 			self.walljump=None
 
+		if keys[pygame.K_LSHIFT]:
+			self.K_d_doubletap=True
+
 		if keys[pygame.K_e]:
 			self.attack(self.eni_groups, self.rect.x+TILE_SIZE, self.rect.y, -10, (TILE_SIZE,TILE_SIZE))
 
-	
 
 
+		if not keys[pygame.K_d]:
+			if self.current_time-self.K_d_doubletap[0]<200:
+				self.K_d_doubletap[1]=pygame.time.get_ticks()
+			self.d_key_block=False
+
+		if not keys[pygame.K_q]:
+			if self.current_time-self.K_q_doubletap[0]<200:
+				self.K_q_doubletap[1]=pygame.time.get_ticks()
+			self.q_key_block=False
+
+		if not keys[pygame.K_LSHIFT]:
+			self.running=False
 
 		if not keys[pygame.K_SPACE]:
 			self.spacebar_block=False
-		if not keys[pygame.K_d]:
-			pass
-		if not keys[pygame.K_q]:
-			pass
-	
+
 
 	def collision_event(self):
 		keys = pygame.key.get_pressed() 
@@ -111,7 +141,33 @@ class Player(Entite):
 	def move(self):
 		self.CollisionType=[]
 		self.collision("climp_zone")
+
+		if self.dashing_last[0] and self.current_time-self.dashing_last[1]>100:
+			x, y=self.rect.x, self.rect.y
+			self.image = self.player_image  # Affectation de l'image au sprite
+			self.rect = self.image.get_rect()  # Récupère le rectangle de l'image
+			self.rect.topleft = (x, y)  # Position initiale du sprite
+			self.image.fill("white")
+			self.dashing_last[0]=False
+
 		if self.walljump==None and not self.in_jump:
+			if self.running:
+				self.rect.x += self.direction.x * PLAYER_SPEED_MULTIPLICATOR/2
+				self.collision("x")
+				
+			if self.dashing:
+				self.dashing=False
+				x, y=self.rect.x, self.rect.y
+				self.image = self.player_image_dash  # Affectation de l'image au sprite
+				self.rect = self.image.get_rect()  # Récupère le rectangle de l'image
+				self.rect.topleft = (x, y)  # Position initiale du sprite
+				for i in range(20):
+					self.rect.x += self.direction.x * PLAYER_SPEED_MULTIPLICATOR
+					self.collision("x")
+				self.dashing_last[0]=True
+				self.dashing_last[1]=pygame.time.get_ticks()
+
+
 			self.rect.x += self.direction.x * PLAYER_SPEED_MULTIPLICATOR
 			self.collision("x")
 			self.rect.y += self.direction.y * PLAYER_SPEED_MULTIPLICATOR
@@ -120,6 +176,18 @@ class Player(Entite):
 		elif self.in_jump and self.walljump==None:
 			if self.wall_jump_jump_right or self.wall_jump_jump_left:
 				self.direction.x =self.direction.x * WALL_JUMP_X_SPEED_MULTIPLICATOR
+			else:
+				if self.dashing:
+					self.dashing=False
+					x, y=self.rect.x, self.rect.y
+					self.image = self.player_image_dash  # Affectation de l'image au sprite
+					self.rect = self.image.get_rect()  # Récupère le rectangle de l'image
+					self.rect.topleft = (x, y)  # Position initiale du sprite
+					for i in range(20):
+						self.rect.x += self.direction.x * PLAYER_SPEED_MULTIPLICATOR
+						self.collision("x")
+					self.dashing_last[0]=True
+					self.dashing_last[1]=pygame.time.get_ticks()
 			self.rect.x += self.direction.x * PLAYER_SPEED_MULTIPLICATOR
 			self.collision("x")
 			for i in range(2):
@@ -149,7 +217,6 @@ class Player(Entite):
 
 
 	def all_cooldown(self):
-		self.current_time=pygame.time.get_ticks()
 		if self.walljump and self.current_time -self.walljump_time > WALL_JUMP_COOLDOWN*10:
 			self.walljump=None
 		if self.in_jump and self.current_time - self.in_jump_time > JUMP_COOLDOWN:
@@ -238,6 +305,7 @@ class Player(Entite):
 
 	def update(self):
 		"""Met à jour le joueur (mouvement + gravité)."""
+		self.current_time=pygame.time.get_ticks()
 		self.input()
 		self.apply_gravity()
 		self.move()
