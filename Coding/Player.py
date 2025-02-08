@@ -62,18 +62,18 @@ class Player(Entite):
 		keys = pygame.key.get_pressed()
 
 		if (keys[pygame.K_q] and not self.walljump) or self.wall_jump_jump_left:
-			if 	self.current_time -self.K_q_doubletap[0]<200 and self.current_time -self.K_q_doubletap[1]<200 and not self.q_key_block and self.current_time -self.lastwalljump_cooldown>700:
+			if 	self.current_time -self.K_q_doubletap[0]<200 and self.current_time -self.K_q_doubletap[1]<200 and not self.q_key_block and self.current_time -self.lastwalljump_cooldown>700 and not self.wall_jump_jump_left:
 				self.dashing=True
 			self.direction.x+=-1
-			self.K_q_doubletap[0]=pygame.time.get_ticks()
-			self.q_key_block=True
+			self.K_q_doubletap[0]=pygame.time.get_ticks() if not self.wall_jump_jump_left else self.K_q_doubletap[0]
+			self.q_key_block=True if not self.wall_jump_jump_left else False
 
 		if (keys[pygame.K_d] and not self.walljump) or self.wall_jump_jump_right:
-			if 	self.current_time -self.K_d_doubletap[0]<200 and self.current_time -self.K_d_doubletap[1]<200 and not self.d_key_block and self.current_time -self.lastwalljump_cooldown>700:
+			if 	self.current_time -self.K_d_doubletap[0]<200 and self.current_time -self.K_d_doubletap[1]<200 and not self.d_key_block and self.current_time -self.lastwalljump_cooldown>200 and not self.wall_jump_jump_right:
 				self.dashing=True
 			self.direction.x+=1
-			self.K_d_doubletap[0]=pygame.time.get_ticks()
-			self.d_key_block=True
+			self.K_d_doubletap[0]=pygame.time.get_ticks()  if not self.wall_jump_jump_right else self.K_d_doubletap[0]
+			self.d_key_block=True if not self.wall_jump_jump_right else False
 
 		if keys[pygame.K_SPACE] and self.jump_count>0 and not self.spacebar_block:  # Saut seulement si au sol
 			if self.walljump=="droite":
