@@ -34,6 +34,8 @@ class Player(Entite):
 		self.spacebar_block=False
 
 		self.player_level=1
+		self.d_block=False
+		self.q_block=False
 
 		self.stats["mana"]={"value":10,"max_value":100}
 		self.stats["xp"]={"value":0,"max_value":100}
@@ -110,7 +112,6 @@ class Player(Entite):
 		if not keys[pygame.K_SPACE]:
 			self.spacebar_block=False
 
-
 	def collision_event(self):
 		keys = pygame.key.get_pressed() 
 		if "climp_gauche" in self.CollisionType and not self.walljump and (keys[pygame.K_q] or self.wall_jump_jump_left) and self.lastwalljump!="gauche":
@@ -122,6 +123,8 @@ class Player(Entite):
 			self.wall_jump_jump_right=False
 			self.wall_jump_jump_left=False
 
+			self.q_block=True
+
 		
 		elif "climp_droite" in self.CollisionType and not self.walljump and (keys[pygame.K_d] or self.wall_jump_jump_right) and self.lastwalljump!="droite":
 			self.walljump="droite"
@@ -131,6 +134,8 @@ class Player(Entite):
 			self.lastwalljump="droite"
 			self.wall_jump_jump_right=False
 			self.wall_jump_jump_left=False
+
+			self.d_block=True
 
 		elif (self.walljump=="gauche" and "climp_gauche" not in self.CollisionType  )or (self.walljump=="droite"  and "climp_droite" not in self.CollisionType):
 			self.walljump=None
