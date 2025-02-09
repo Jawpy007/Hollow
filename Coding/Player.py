@@ -235,7 +235,6 @@ class Player(Entite):
 
 
 	def collision(self,Direction):
-
 		if Direction == "x":
 			for sprite in self.obs_groups: # on parcour tout les sprite qui ont une hitbox
 				if sprite.rect.colliderect(self.rect):

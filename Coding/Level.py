@@ -6,6 +6,7 @@ from Spectre import Spectre  # Import de classe Spectre
 from tile import *
 from Craspeau import *
 from Ui import UI
+from pnj import pnj
 
 class CreateLevel():
 	def __init__(self,LevelName,Screen, game):
@@ -18,8 +19,9 @@ class CreateLevel():
 			self.enemy_sprites = pygame.sprite.Group() #Sprite non Visible par le joueur exemple Hit-Box
 			self.items_sprites= pygame.sprite.Group()
 			self.climp_zone=pygame.sprite.Group()
+			self.clickable_items=pygame.sprite.Group()
 
-			self.ui=UI("game_level", game)
+			self.ui=UI("game_level", game, self)
 			self.screen=Screen
 			self.create_map(WORLD_MAP)
 	
@@ -46,6 +48,9 @@ class CreateLevel():
 						CreateTiles(x, y, [self.visible_sprites,self.obstacles_sprites,self.climp_zone], img_climp, Col)
 					elif Col=="climp_wall_g":
 						CreateTiles(x, y, [self.visible_sprites,self.obstacles_sprites,self.climp_zone], img_climp, Col)
+					elif Col=="n":
+						pnj(x, y, [self.visible_sprites,self.obstacles_sprites, self.clickable_items],self.obstacles_sprites)
+
 	def run(self):
 		self.visible_sprites.custom_draw(self.player)
 		self.visible_sprites.update()
@@ -78,3 +83,7 @@ class YSortCameraGroup(pygame.sprite.Group):
 		for sprite in self.sprites():
 			offset_pos = sprite.rect.topleft - self.offset
 			self.display_surface.blit(sprite.image,offset_pos)
+			
+	def get_world_mouse_pos(self):
+		mouse_x, mouse_y = pygame.mouse.get_pos()
+		return pygame.math.Vector2(mouse_x + self.offset.x, mouse_y + self.offset.y)
