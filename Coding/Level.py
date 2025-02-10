@@ -7,6 +7,7 @@ from tile import *
 from Craspeau import *
 from Ui import UI
 from pnj import pnj
+from Craspeau import Belier
 
 class CreateLevel():
 	def __init__(self,LevelName,Screen, game):
@@ -39,7 +40,7 @@ class CreateLevel():
 						self.player.rect.x=x
 						self.player.rect.y=y
 					elif Col=="m":
-						Monstre(x, y, [self.visible_sprites,self.enemy_sprites], self.player, self.obstacles_sprites)  # Instance d'un monstre
+						Belier(x, y, [self.visible_sprites, self.enemy_sprites], self.obstacles_sprites, self.player)
 					elif Col=="s":
 						Spectre(x, y, [self.visible_sprites,self.enemy_sprites], self.player, self.obstacles_sprites) #Instance d'un spectre
 					elif Col=="x":
