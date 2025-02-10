@@ -89,7 +89,7 @@ class Player(Entite):
 			self.walljump=None
 
 		if keys[pygame.K_LSHIFT]:
-			self.K_d_doubletap=True
+			self.running=True
 
 		if keys[pygame.K_e]:
 			self.attack(self.eni_groups, self.rect.x+TILE_SIZE, self.rect.y, -10, (TILE_SIZE,TILE_SIZE))
