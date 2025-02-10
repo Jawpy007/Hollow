@@ -102,9 +102,10 @@ class Entite(pygame.sprite.Sprite):
 
 	
 class CreateHitbox(pygame.sprite.Sprite):
-	def __init__(self,x, y, size=(TILE_SIZE,TILE_SIZE)):
-
-		self.image=pygame.Surface(size)
+	def __init__(self,x, y, size=(TILE_SIZE,TILE_SIZE), groups_hit=None):
+		if groups_hit !=None:
+			super().__init__(groups_hit)
+		self.image=pygame.Surface((TILE_SIZE,TILE_SIZE))
 		#self.image.set_alpha(0)
 		self.image.fill("blue")
 		self.rect = self.image.get_rect(topleft = (x,y))

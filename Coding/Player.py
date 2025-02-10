@@ -7,7 +7,7 @@ Une classe Player qui hérite de Entite, avec ses propres mouvements et sauts.
 """
 
 class Player(Entite):
-	def __init__(self, x, y,groups, eni_groups,obs_groups, climp_zone, color=(255, 255, 255)):
+	def __init__(self, x, y,groups, eni_groups,obs_groups, climp_zone, visible_groups, color=(255, 255, 255)):
 		super().__init__(x, y, groups, obs_groups,color)  # Appelle le constructeur de Entite
 		self.eni_groups=eni_groups
 
@@ -54,12 +54,16 @@ class Player(Entite):
 		self.player_image_dash = pygame.image.load("Coding/graphics/player/dash.png")  
 		self.player_image = pygame.Surface((TILE_SIZE,TILE_SIZE))
 
+		self.arc=ranged_weapons("arc", -10, 100, 100, 100,100, visible_groups)
+
 	def import_player_assets(self):
 		pass
 
 	def input(self):
 		self.direction=pygame.math.Vector2()
 		keys = pygame.key.get_pressed()
+		mouse = pygame.mouse.get_pressed()
+		cliquedroit = mouse[0]
 
 		if (keys[pygame.K_q] and not self.walljump) or self.wall_jump_jump_left:
 			if 	self.current_time -self.K_q_doubletap[0]<200 and self.current_time -self.K_q_doubletap[1]<200 and not self.q_key_block and self.current_time -self.lastwalljump_cooldown>700 and not self.wall_jump_jump_left:
@@ -94,7 +98,8 @@ class Player(Entite):
 		if keys[pygame.K_e]:
 			self.attack(self.eni_groups, self.rect.x+TILE_SIZE, self.rect.y, -10, (TILE_SIZE,TILE_SIZE))
 
-
+		if cliquedroit:
+			self.arc.use_weapons(self)
 
 		if not keys[pygame.K_d]:
 			if self.current_time-self.K_d_doubletap[0]<200:
@@ -111,6 +116,8 @@ class Player(Entite):
 
 		if not keys[pygame.K_SPACE]:
 			self.spacebar_block=False
+	
+		
 
 	def collision_event(self):
 		keys = pygame.key.get_pressed() 
@@ -211,6 +218,7 @@ class Player(Entite):
 			self.direction.y=1
 			self.rect.y += self.direction.y
 			self.collision("y")
+	
 
 
 	def apply_gravity(self):
@@ -315,6 +323,77 @@ class Player(Entite):
 		self.move()
 		self.collision_event()
 		self.all_cooldown()
+		self.arc.update()
 
+class weapons:
+	def __init__(self, name, damage, cooldwon):
 
+		#caractéristique de l'arme
+		self.name=name
+		self.damage=damage
+
+		#gestion du temps
+		self.cooldwon=cooldwon
+		self.attack_time=pygame.time.get_ticks()
+		self.current_time=pygame.time.get_ticks()
+
+class ranged_weapons(weapons):
+	def __init__(self, name, damage, cooldwon, range, fire_ready_time, reload_time, visible_groups):
+		super().__init__(name, damage, cooldwon)
+		self.fire_ready_time=fire_ready_time
+		self.range=range
+		self.reload_time=reload_time
+		self.attacking=False
+		self.current_projectille=[] # tout les projectille en cours d'utilisation
+		self.projectille_cooldwon=[]
+		self.visible_groups=visible_groups
+
+	def use_weapons(self, user):
+		attack_time=self.current_time
+		self.attacking=True
+		self.projectille_cooldwon.append(attack_time)
+		self.current_projectille+=[projectille(1,user.rect.x, user.rect.y, user, self.visible_groups)]
+
+	def projectile_pos_update(self):
+		if len(self.current_projectille)<=0:
+			self.attacking=False
+		else:
+			print("usee111ee")
+			if self.current_time-self.projectille_cooldwon[-1]>self.cooldwon*10:
+				self.current_projectille.pop(-1)
+				self.projectille_cooldwon.pop(-1)
+			print(len(self.current_projectille))
+			for projectille in self.current_projectille:
+				projectille.update()
+
+	def update(self):
+		self.current_time=pygame.time.get_ticks()
+		if self.attacking:
+			self.projectile_pos_update()
+
+class projectille(pygame.sprite.Sprite):
+	def __init__(self, y_impact, start_pos_x, start_pos_y, user, visible_groups,projectille_img=None):
+		self.y_impact=y_impact
+		self.x=start_pos_x
+		self.y=start_pos_y
+		self.user=user
+		self.visible_groups=visible_groups
+		self.sprite=CreateHitbox(self.x, self.y, groups_hit=self.visible_groups)
+
+	def projectille_moving(self):
+		self.sprite.rect.x+=10
+		self.sprite.rect.y+=3
+		print("jjgh")
 		
+
+	def update(self):
+		print("useeee")
+		self.projectille_moving()
+
+class melee_weapons(weapons):
+	def __init__(self, name, damage, cooldwon, hitbox_x, hitbox_y):
+		super().__init__(self, name, damage, cooldwon)
+		self.name=name
+
+	def use_weapons(self, target):
+		self.attack(target, self.rect.x-TILE_SIZE, self.rect.y, -1, (TILE_SIZE,TILE_SIZE))

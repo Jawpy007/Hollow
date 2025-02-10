@@ -145,7 +145,6 @@ class UI:
 		if self.in_dialogue==False:
 			mouse_cord = self.level.visible_sprites.get_world_mouse_pos()
 			for sprite in self.level.clickable_items:
-				print(mouse_cord, sprite.rect.x, sprite.rect.y)
 				if sprite.rect.collidepoint(mouse_cord):
 					cursor = pygame.cursors.compile(dialogue_strings)
 					pygame.mouse.set_cursor((24, 24), (0, 0), *cursor)

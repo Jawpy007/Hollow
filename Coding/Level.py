@@ -29,7 +29,7 @@ class CreateLevel():
 		img= pygame.image.load('Coding/graphics/tilemap/ground/stone.png').convert()
 		img_climp= pygame.image.load('Coding/graphics/tilemap/ground/climbable wall.png').convert()
 		self.tiles_liste=[]
-		self.player = Player(0, 0, self.visible_sprites, self.enemy_sprites, self.obstacles_sprites, self.climp_zone)  # Instance du joueur
+		self.player = Player(0, 0, self.visible_sprites, self.enemy_sprites, self.obstacles_sprites, self.climp_zone, self.visible_sprites)  # Instance du joueur
 		for LigneIndex, Ligne in enumerate(Map):
 			for ColIndex, Col in enumerate(Ligne):
 				if Col!=VOID_CHR:
