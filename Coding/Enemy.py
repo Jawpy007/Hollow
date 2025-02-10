@@ -25,10 +25,10 @@ class Monstre(Entite):
         else:
             self.direction = pygame.math.Vector2()  # Stopper le mouvement
 
-        if 32>=dx>0:
-            self.attack([self.player], self.rect.x+TILE_SIZE, self.rect.y, 1, (TILE_SIZE,TILE_SIZE))
-        elif -32<=dx<=0:
-            self.attack([self.player], self.rect.x-TILE_SIZE, self.rect.y, 1, (TILE_SIZE,TILE_SIZE))
+        if TILE_SIZE>=dx>0:
+            self.attack([self.player], self.rect.x+TILE_SIZE, self.rect.y, -1, (TILE_SIZE,TILE_SIZE))
+        elif -TILE_SIZE<=dx<=0:
+            self.attack([self.player], self.rect.x-TILE_SIZE, self.rect.y, -1, (TILE_SIZE,TILE_SIZE))
 
 
 
