@@ -21,6 +21,7 @@ class CreateLevel():
 			self.items_sprites= pygame.sprite.Group()
 			self.climp_zone=pygame.sprite.Group()
 			self.clickable_items=pygame.sprite.Group()
+			self.collectable_items=pygame.sprite.Group()
 
 			self.ui=UI("game_level", game, self)
 			self.screen=Screen
@@ -49,6 +50,8 @@ class CreateLevel():
 						CreateTiles(x, y, [self.visible_sprites,self.obstacles_sprites,self.climp_zone], img_climp, Col)
 					elif Col=="climp_wall_g":
 						CreateTiles(x, y, [self.visible_sprites,self.obstacles_sprites,self.climp_zone], img_climp, Col)
+					elif Col=="c":
+						CreateChest(x, y, [self.visible_sprites,self.obstacles_sprites, self.clickable_items], self.player, self.visible_sprites)
 					elif Col=="n":
 						pnj(x, y, [self.visible_sprites,self.obstacles_sprites, self.clickable_items],self.obstacles_sprites)
 

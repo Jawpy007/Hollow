@@ -146,12 +146,20 @@ class UI:
 			mouse_cord = self.level.visible_sprites.get_world_mouse_pos()
 			for sprite in self.level.clickable_items:
 				if sprite.rect.collidepoint(mouse_cord):
-					cursor = pygame.cursors.compile(dialogue_strings)
-					pygame.mouse.set_cursor((24, 24), (0, 0), *cursor)
-					mouse = pygame.mouse.get_pressed()
-					cliquedroit = mouse[0]
-					if cliquedroit:
-						self.dialogue_start(sprite)
+					if sprite.name == "Chest":
+						cursor = pygame.cursors.compile(dialogue_strings)
+						pygame.mouse.set_cursor((24, 24), (0, 0), *cursor)
+						mouse = pygame.mouse.get_pressed()
+						cliquedroit = mouse[0]
+						if cliquedroit:
+							sprite.give_items()
+					else:
+						cursor = pygame.cursors.compile(dialogue_strings)
+						pygame.mouse.set_cursor((24, 24), (0, 0), *cursor)
+						mouse = pygame.mouse.get_pressed()
+						cliquedroit = mouse[0]
+						if cliquedroit:
+							self.dialogue_start(sprite)
 
 	def display(self, player=None):
 		# Affichage de l'UI en fonction du type de niveau
