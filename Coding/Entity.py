@@ -15,6 +15,10 @@ class Entite(pygame.sprite.Sprite):
 
         self.stats = {"hp": {"value": 10, "max_value": 100}}
 
+        #Pour gerer les animations
+        self.sprites = [] #Liste contenant tout les sprites
+        self.current_sprite = 0 #Indice de l'image utilisée
+
     def apply_gravity(self):
         self.direction.y = GRAVITY * 4  # Déplace l'entité en fonction de la gravité
 

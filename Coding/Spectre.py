@@ -3,6 +3,7 @@ import pygame
 import math
 from Entity import Entite
 
+
 """
 Post-it pour ameliorer le spectre :
 
@@ -15,10 +16,12 @@ calcule de la position de fin en fonction d'une symetrie axiale par rapport au j
 
 
 class Spectre(Entite):
-    def __init__(self, x, y, groups, player,obs_groups, color=(128, 0, 128), speed=2, detection_radius=528):
+    def __init__(self, x, y, groups, player,obs_groups, color=(128, 0, 128), speed=2, detection_radius=300):
         super().__init__(x, y,groups,obs_groups,color=color)
         self.speed = speed  # Vitesse de déplacement en mode idle
         self.detection_radius = detection_radius  # Rayon de détection du joueur
+        self.attack_radius = 50
+        self.hit = False
         self.player=player
         self.direction = pygame.math.Vector2()
 
@@ -34,6 +37,20 @@ class Spectre(Entite):
         self.target_pos = None  # Position du joueur au début de l'attaque
         self.attack_amplitude = 100  # Amplitude du mouvement en courbe
         self.end_pos = (800,500) #Position de base
+
+        #Import des animations 
+        self.sprites.append(pygame.image.load('Coding\Specter_Animation\Attack\Frame1.png'))
+        self.sprites.append(pygame.image.load('Coding\Specter_Animation\Attack\Frame2.png'))
+        self.sprites.append(pygame.image.load('Coding\Specter_Animation\Attack\Frame3.png'))
+        self.sprites.append(pygame.image.load('Coding\Specter_Animation\Attack\Frame4.png'))
+        self.sprites.append(pygame.image.load('Coding\Specter_Animation\Attack\Frame5.png'))
+        self.sprites.append(pygame.image.load('Coding\Specter_Animation\Attack\Frame6.png'))
+
+        self.image = self.sprites[self.current_sprite] #Obtention de l'image actuelle 
+
+        #Affichage de l'image
+        self.rect = self.image.get_rect()
+        self.rect.topleft = [x,y]
 
     def distance_player(self,player):
         """Retourne la distance du mob au joueur."""
@@ -69,7 +86,19 @@ class Spectre(Entite):
             self.state = "return"
             self.attack_timer = 0
             return
+        
+        if self.distance_player(self.player) < self.attack_radius and self.hit == False:
+            print("Tapé")
+            self.attack([self.player], self.rect.x, self.rect.y,5)
+            self.hit = True
 
+
+        if self.attack_timer % 10 == 0:
+            if self.current_sprite >= 5:
+                self.current_sprite = 0
+            else:
+                self.current_sprite += 1
+                self.image = self.sprites[self.current_sprite] 
         x0, y0 = self.start_pos
         target_x, target_y = self.target_pos
         new_x = x0 + (target_x - x0) * t
@@ -91,6 +120,9 @@ class Spectre(Entite):
             # Retour terminé, passage en attente
             self.state = "waiting"
             self.wait_timer = 0
+            self.current_sprite = 0
+            self.image = self.sprites[self.current_sprite]
+            self.hit = False
             return
 
         target_x, target_y = self.end_pos
