@@ -8,7 +8,6 @@ class inventory:
 
     def update(self):
         for item in self.items_dict.values():
-            print( item)
             item.update()
 
 

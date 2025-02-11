@@ -98,7 +98,10 @@ class Player(Entite):
 			self.running=True
 
 		if keys[pygame.K_e]:
-			self.attack(self.eni_groups, self.rect.x+TILE_SIZE, self.rect.y, -10, (TILE_SIZE,TILE_SIZE))
+			if not self.e_key_block:
+				print("kll")
+				self.attack(self.eni_groups, self.rect.x+TILE_SIZE, self.rect.y, -50, (TILE_SIZE,TILE_SIZE))
+				self.e_key_block=True
 
 		if keys[pygame.K_r]:
 			if len(self.inventory.items_dict)>0:
@@ -117,6 +120,10 @@ class Player(Entite):
 			if self.current_time-self.K_q_doubletap[0]<200:
 				self.K_q_doubletap[1]=pygame.time.get_ticks()
 			self.q_key_block=False
+
+		if not keys[pygame.K_e]:
+			self.e_key_block=False
+
 
 		if not keys[pygame.K_LSHIFT]:
 			self.running=False
@@ -285,8 +292,6 @@ class Player(Entite):
 						self.rect.top = sprite.rect.bottom #on va en bas du sprite avec le quel on est entrée en collision 
 						self.CollisionType+=["haut]"]
 
-	def death(self):
-		print("mort")
 
 	def player_level_up(self, value=1):
 		self.player_xp_level+=value
