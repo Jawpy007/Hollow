@@ -46,6 +46,9 @@ class Player(Entite):
 
 		self.running=False
 
+		self.e_key_block=False
+		self.r_key_block=False
+
 		self.player_xp_level=1
 
 		self.dashing_last=[False, pygame.time.get_ticks()]
@@ -104,8 +107,9 @@ class Player(Entite):
 				self.e_key_block=True
 
 		if keys[pygame.K_r]:
-			if len(self.inventory.items_dict)>0:
+			if len(self.inventory.items_dict)>0 and not self.r_key_block :
 				self.inventory.items_dict["bow"].reload()
+				self.r_key_block=True
 
 		if cliquedroit:
 			if len(self.inventory.items_dict)>0:
@@ -123,6 +127,9 @@ class Player(Entite):
 
 		if not keys[pygame.K_e]:
 			self.e_key_block=False
+
+		if not keys[pygame.K_r]:
+			self.r_key_block=False
 
 
 		if not keys[pygame.K_LSHIFT]:
