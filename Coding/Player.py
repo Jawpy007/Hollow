@@ -11,55 +11,63 @@ Une classe Player qui hérite de Entite, avec ses propres mouvements et sauts.
 class Player(Entite):
 	def __init__(self, x, y,groups, eni_groups,obs_groups, climp_zone, visible_groups, color=(255, 255, 255)):
 		super().__init__(x, y, groups, obs_groups,color)  # Appelle le constructeur de Entite
+
+		#====variable graphique elementaire du joueur====
+		self.player_image = pygame.Surface((TILE_SIZE,TILE_SIZE))
+		self.player_layer=1
+		
+
+		#====groupe de sprite des enemie du joueur====
 		self.eni_groups=eni_groups
 
-		self.direction = pygame.math.Vector2()
-
-		self.jump_count=MAXJUMP
-
-		self.climp_zone=climp_zone
-		self.walljump=None
-		self.walljump_time=pygame.time.get_ticks()
-
-		self.lastwalljump=None
-		self.lastwalljump_cooldown=pygame.time.get_ticks()
-
-		self.wall_jump_jump_left=False
-		self.wall_jump_jump_left_cooldown=pygame.time.get_ticks()
-
-		self.wall_jump_jump_right=False
-		self.wall_jump_jump_right_cooldown=pygame.time.get_ticks()
-		
-		self.in_jump=False
-		self.in_jump_time =pygame.time.get_ticks()
-
-		self.spacebar_block=False
-
-		self.player_level=1
-		self.d_block=False
-		self.q_block=False
-
+		#====variable de stats====
+		self.inventory=inventory()
+		self.player_xp_level=1
 		self.stats["mana"]={"value":10,"max_value":100}
 		self.stats["xp"]={"value":0,"max_value":100}
 
-		self.dashing=False
 
+		#====variable de mouvement====
+		self.direction = pygame.math.Vector2()
+
+			#mouvement horrizontal
+				#gestion de dash
+		self.dashing_last=[False, pygame.time.get_ticks()]
+		self.dashing=False
+		self.player_image_dash = pygame.image.load("Coding/graphics/player/dash.png") 
+
+				#gestion de mouvement rapide
 		self.running=False
 
+			#mouvement vertical
+				#jump
+		self.jump_count=MAXJUMP
+		self.in_jump=False
+		self.in_jump_time =pygame.time.get_ticks()
+
+				#variable pour le wall jump
+		self.climp_zone=climp_zone
+		self.walljump=None
+		self.walljump_time=pygame.time.get_ticks()
+		self.lastwalljump=None
+		self.lastwalljump_cooldown=pygame.time.get_ticks()
+		self.wall_jump_jump_left=False
+		self.wall_jump_jump_left_cooldown=pygame.time.get_ticks()
+		self.wall_jump_jump_right=False
+		self.wall_jump_jump_right_cooldown=pygame.time.get_ticks()
+
+		#====variable de detection de touche====
+			#variable de detection de touche maintenue
+		self.spacebar_key_block=False
 		self.e_key_block=False
 		self.r_key_block=False
 
-		self.player_xp_level=1
-
-		self.dashing_last=[False, pygame.time.get_ticks()]
-
+			# variable de detection d'appuit consecutif
 		self.K_d_doubletap=[pygame.time.get_ticks() ,pygame.time.get_ticks()]
 		self.K_q_doubletap=[pygame.time.get_ticks() ,pygame.time.get_ticks()] #time de la derniere press et time du dernier lacher
 
-		self.player_image_dash = pygame.image.load("Coding/graphics/player/dash.png")  
-		self.player_image = pygame.Surface((TILE_SIZE,TILE_SIZE))
 
-		self.inventory=inventory()
+
 
 	def import_player_assets(self):
 		pass
@@ -84,7 +92,7 @@ class Player(Entite):
 			self.K_d_doubletap[0]=pygame.time.get_ticks()  if not self.wall_jump_jump_right else self.K_d_doubletap[0]
 			self.d_key_block=True if not self.wall_jump_jump_right else False
 
-		if keys[pygame.K_SPACE] and self.jump_count>0 and not self.spacebar_block:  # Saut seulement si au sol
+		if keys[pygame.K_SPACE] and self.jump_count>0 and not self.spacebar_key_block:  # Saut seulement si au sol
 			if self.walljump=="droite":
 				self.wall_jump_jump_left=True
 				self.wall_jump_jump_left_cooldown=pygame.time.get_ticks()
@@ -94,7 +102,7 @@ class Player(Entite):
 			self.in_jump=True
 			self.jump_count-=1
 			self.in_jump_time =pygame.time.get_ticks()
-			self.spacebar_block=True
+			self.spacebar_key_block=True
 			self.walljump=None
 
 		if keys[pygame.K_LSHIFT]:
@@ -136,7 +144,7 @@ class Player(Entite):
 			self.running=False
 
 		if not keys[pygame.K_SPACE]:
-			self.spacebar_block=False
+			self.spacebar_key_block=False
 	
 		
 
@@ -150,9 +158,6 @@ class Player(Entite):
 			self.lastwalljump="gauche"
 			self.wall_jump_jump_right=False
 			self.wall_jump_jump_left=False
-
-			self.q_block=True
-
 		
 		elif "climp_droite" in self.CollisionType and not self.walljump and (keys[pygame.K_d] or self.wall_jump_jump_right) and self.lastwalljump!="droite":
 			self.walljump="droite"
@@ -162,8 +167,6 @@ class Player(Entite):
 			self.lastwalljump="droite"
 			self.wall_jump_jump_right=False
 			self.wall_jump_jump_left=False
-
-			self.d_block=True
 
 		elif (self.walljump=="gauche" and "climp_gauche" not in self.CollisionType  )or (self.walljump=="droite"  and "climp_droite" not in self.CollisionType):
 			self.walljump=None
