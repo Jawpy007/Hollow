@@ -16,12 +16,12 @@ class weapons:
 
 
 class ranged_weapons(weapons):
-	def __init__(self, name, damage, cooldwon, range, fire_ready_cooldown, reload_time, visible_groups, magazine_size, player):
+	def __init__(self, name, damage, cooldwon, range, fire_ready_cooldown, reload_time, visible_groups, magazine_size, player, eni_group):
 		super().__init__(name, damage, cooldwon)
 		
 		self.fire_ready_cooldown=fire_ready_cooldown
 		self.last_shot_time=pygame.time.get_ticks()
-
+		self.eni_group=eni_group
 		self.range=range
 		self.reload_time=reload_time
 		self.attacking=False
@@ -33,7 +33,7 @@ class ranged_weapons(weapons):
 		self.magazine_size=magazine_size
 		self.starting_reloading_time=pygame.time.get_ticks()
 		self.reloading=False
- 
+		self.damage=damage
 
 	def use_weapons(self, user):
 		self.current_time = pygame.time.get_ticks()
@@ -58,9 +58,9 @@ class ranged_weapons(weapons):
 				attack_time = self.current_time
 				self.ammo -= 1
 				self.attacking = True
-				self.projectille_cooldwon.append(attack_time)
+				self.projectille_cooldwon+=[attack_time]
 				self.current_projectille.append(
-					projectille(-y_force, x_force, user.rect.x + TILE_SIZE / 2, user.rect.y - TILE_SIZE / 2, user, self.visible_groups, self.player, self.cooldwon)
+					projectille(-y_force, x_force, user.rect.x + TILE_SIZE / 2, user.rect.y - TILE_SIZE / 2, user, self.visible_groups, self.player, self.cooldwon, self.eni_group, self.damage)
 				)
 				self.last_shot_time = pygame.time.get_ticks()
 
@@ -77,10 +77,10 @@ class ranged_weapons(weapons):
 			self.attacking=False
 		else:
 
-			if self.current_time-self.projectille_cooldwon[-1]>self.cooldwon:
-				self.current_projectille[-1].sprite.kill() #remove le projectile 
-				self.current_projectille.pop(-1)
-				self.projectille_cooldwon.pop(-1)
+			if self.current_time-self.projectille_cooldwon[0]>self.cooldwon:
+				self.current_projectille[0].sprite.kill() #remove le projectile 
+				self.current_projectille.pop(0)
+				self.projectille_cooldwon.pop(0)
 
 			for projectille in self.current_projectille:
 				projectille.update()
@@ -96,7 +96,7 @@ class ranged_weapons(weapons):
 
 
 class projectille(pygame.sprite.Sprite):
-	def __init__(self, y_velocity, x_velocity, start_pos_x, start_pos_y, user, visible_groups, player, cooldwon):
+	def __init__(self, y_velocity, x_velocity, start_pos_x, start_pos_y, user, visible_groups, player, cooldwon, eni_groups, damage):
 		self.cooldwon = cooldwon
 		self.player = player
 		self.x_velocity = x_velocity
@@ -108,7 +108,8 @@ class projectille(pygame.sprite.Sprite):
 		self.visible_groups = visible_groups
 		self.sprite = CreateHitbox(self.x, self.y, groups_hit=self.visible_groups)
 		self.stop = False
-
+		self.eni_groups=eni_groups
+		self.damage=damage
 
 	def projectille_collision(self, direction):
 
@@ -136,6 +137,11 @@ class projectille(pygame.sprite.Sprite):
 
 	def projectille_moving(self):
 		if not self.stop:
+			for sprite in self.eni_groups:
+				if self.sprite.rect.colliderect(sprite):
+					sprite.stats_update("hp", self.damage)
+					self.stop=True
+					self.sprite.kill()
 			self.y_velocity += self.gravity  # Accélération progressive vers le bas
 			self.sprite.rect.x += self.x_velocity
 			self.projectille_collision("x")

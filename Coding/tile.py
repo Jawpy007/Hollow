@@ -36,5 +36,5 @@ class CreateChest(pygame.sprite.Sprite):
             self.image = pygame.image.load("Coding/graphics/tilemap/ground/chest_open.png")
             self.image = pygame.transform.scale(self.image, (TILE_SIZE, TILE_SIZE))  # Redimensionner
             self.name="Chest"
-            self.player.inventory.add_items(ranged_weapons("self.item_name", -10, 1000, 100, 100,100, self.visible_groups, 5, self.player), "bow")
+            self.player.inventory.add_items(ranged_weapons("self.item_name", -10, 1000, 100, 100,100, self.visible_groups, 5, self.player, self.player.eni_groups), "bow")
             self.oppened=True

@@ -9,7 +9,7 @@ class pnj(Entite):
         self.speed = speed  # Vitesse de déplacement de l'ennemi
         self.detection_radius = detection_radius  # Rayon de détection du joueur
         self.direction = pygame.math.Vector2()
-        self.name="john"
+        self.name="John"
         self.dialogue_states=0
         self.generic_dialogue_index=1
 
