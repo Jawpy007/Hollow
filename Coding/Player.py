@@ -3,7 +3,7 @@ from Settings import *
 from Entity import *
 from Weapons import *
 from Inventory import *
-
+from Graphics import import_folder
 """
 Une classe Player qui hérite de Entite, avec ses propres mouvements et sauts.
 """
@@ -15,7 +15,9 @@ class Player(Entite):
 		#====variable graphique elementaire du joueur====
 		self.player_image = pygame.Surface((TILE_SIZE,TILE_SIZE))
 		self.player_layer=1
-		
+		self.player_status="idle"
+
+		self.effect=None
 
 		#====groupe de sprite des enemie du joueur====
 		self.eni_groups=eni_groups
@@ -34,7 +36,7 @@ class Player(Entite):
 				#gestion de dash
 		self.dashing_last=[False, pygame.time.get_ticks()]
 		self.dashing=False
-		self.player_image_dash = pygame.image.load("Coding/graphics/player/dash.png") 
+		self.player_image_dash = pygame.image.load("Coding/graphics/player/dash/dash.png") 
 
 				#gestion de mouvement rapide
 		self.running=False
@@ -59,7 +61,7 @@ class Player(Entite):
 		#====variable de detection de touche====
 			#variable de detection de touche maintenue
 		self.spacebar_key_block=False
-		self.e_key_block=False
+		self.attacking=False
 		self.r_key_block=False
 
 			# variable de detection d'appuit consecutif
@@ -67,12 +69,24 @@ class Player(Entite):
 		self.K_q_doubletap=[pygame.time.get_ticks() ,pygame.time.get_ticks()] #time de la derniere press et time du dernier lacher
 
 
-
-
 	def import_player_assets(self):
-		pass
+		chr_path="Coding/graphics/player/"
+		self.animations = {
+	'left': [], 'right': [],
+    'right_idle': [], 'left_idle': [],
+    'right_attack': [], 'left_attack': [],
+    'right_bow': [], 'left_bow': [],
+	'dash': []
+}
+		for animation in self.animations.keys():
+			full_path=chr_path+animation
+			self.animations[animation]=import_folder(full_path)
 
 	def input(self):
+		#==============================================
+		#detection des touche et reaction en conséquence
+		#==============================================
+
 		self.direction=pygame.math.Vector2()
 		keys = pygame.key.get_pressed()
 		mouse = pygame.mouse.get_pressed()
@@ -109,10 +123,11 @@ class Player(Entite):
 			self.running=True
 
 		if keys[pygame.K_e]:
-			if not self.e_key_block:
+			if not self.attacking:
 				print("kll")
 				self.attack(self.eni_groups, self.rect.x+TILE_SIZE, self.rect.y, -50, (TILE_SIZE,TILE_SIZE))
-				self.e_key_block=True
+				self.attacking=True
+				self.attack_time=pygame.time.get_ticks()
 
 		if keys[pygame.K_r]:
 			if len(self.inventory.items_dict)>0 and not self.r_key_block :
@@ -133,8 +148,6 @@ class Player(Entite):
 				self.K_q_doubletap[1]=pygame.time.get_ticks()
 			self.q_key_block=False
 
-		if not keys[pygame.K_e]:
-			self.e_key_block=False
 
 		if not keys[pygame.K_r]:
 			self.r_key_block=False
@@ -149,6 +162,11 @@ class Player(Entite):
 		
 
 	def collision_event(self):
+		#==============================================
+		# utilise les collision enregistrer et agis en 
+		# conséquence ( si le joueur est a coté d'une
+		# echelle il lui fait utiliser l'echelle par exemple)
+		#==============================================
 		keys = pygame.key.get_pressed() 
 		if "climp_gauche" in self.CollisionType and not self.walljump and (keys[pygame.K_q] or self.wall_jump_jump_left) and self.lastwalljump!="gauche":
 			self.walljump="gauche"
@@ -175,6 +193,9 @@ class Player(Entite):
 			self.jump_count=MAXJUMP
 
 	def move(self):
+		#==============================================
+		#deplacement du joueur
+		#==============================================
 		self.CollisionType=[]
 		self.collision("climp_zone")
 
@@ -246,14 +267,17 @@ class Player(Entite):
 
 
 	def apply_gravity(self):
+		#==============================================
+		# applique la force de la gravité au mouvement vertical du joueur
+		#==============================================
 		if self.walljump==None:
 			self.direction.y += GRAVITY
- # Déplace l'entité en fonction de la gravité
-		if self.walljump:
-			pass
 
 
 	def all_cooldown(self):
+		#==============================================
+		#gestion du temps entre la realisation de differente action
+		#==============================================
 		if self.walljump and self.current_time -self.walljump_time > WALL_JUMP_COOLDOWN*10:
 			self.walljump=None
 		if self.in_jump and self.current_time - self.in_jump_time > JUMP_COOLDOWN:
@@ -264,9 +288,15 @@ class Player(Entite):
 			self.wall_jump_jump_left=False
 		if self.wall_jump_jump_right and self.current_time-self.wall_jump_jump_right_cooldown> JUMP_COOLDOWN*2:
 			self.wall_jump_jump_right=False
+		if self.attacking and self.attack_time-self.wall_jump_jump_right_cooldown> JUMP_COOLDOWN*2:
+			self.attacking=False
 
 
 	def collision(self,Direction):
+		#==============================================
+		#detection des collision et reaction en
+		#conséquence (annulation du mouvement si collision)
+		#==============================================
 		if Direction == "x":
 			for sprite in self.obs_groups: # on parcour tout les sprite qui ont une hitbox
 				if sprite.rect.colliderect(self.rect):
@@ -304,9 +334,18 @@ class Player(Entite):
 
 
 	def player_level_up(self, value=1):
+		#==============================================
+		# gere le level du joueur
+		#==============================================
 		self.player_xp_level+=value
 
 	def stats_update(self, nom_stats, value_update, max_value=None):
+		#==============================================
+		# gestion des stats qui prend en parametre
+		# le nom de la stats a améliorer
+		# la valeur a affecter en plus ou en moins
+		# et la potentiel modification du maximum de la stats
+		#==============================================
 		if max_value is not None:
 			self.stats[nom_stats]["max_value"] = max_value
 
@@ -338,6 +377,9 @@ class Player(Entite):
 		return True
 
 	def update(self):
+		#==============================================
+		# boucle principal du joueur 
+		#==============================================
 		"""Met à jour le joueur (mouvement + gravité)."""
 		self.current_time=pygame.time.get_ticks()
 		self.input()
