@@ -109,11 +109,7 @@ class Player(Entite):
 
 			else:
 				if not "_bow" in self.status:
-					if "idle" in self.status:
-						#reset status
-						self.status=self.status.replace("_idle", "_bow")
-					else:
-						self.status=self.attack_side+"_bow"
+					self.status=self.attack_side+"_bow"
 					if  "attack" in self.status: 
 						self.status=self.status.replace("_attack","")
 		else:

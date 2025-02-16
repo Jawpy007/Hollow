@@ -59,7 +59,7 @@ class ranged_weapons(weapons):
 			projectille(-y_force, x_force, user.rect.x + TILE_SIZE / 2, user.rect.y - TILE_SIZE / 2, user, self.visible_groups, self.player, self.cooldwon, self.eni_group, self.damage)
 		)
 		self.last_shot_time = pygame.time.get_ticks()
-		return -1
+		return x_force
 
 
 
