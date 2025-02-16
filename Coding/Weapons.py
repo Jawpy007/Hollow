@@ -36,33 +36,30 @@ class ranged_weapons(weapons):
 		self.damage=damage
 
 	def use_weapons(self, user):
-		self.current_time = pygame.time.get_ticks()
-		if self.current_time - self.last_shot_time > self.fire_ready_cooldown:
-			if self.ammo > 0:
-				mouse_cord = pygame.mouse.get_pos()
+		mouse_cord = pygame.mouse.get_pos()
 
-				print(((1+mouse_cord[1] / HEIGHT)) * 10)
-				y_force = ((HEIGHT - mouse_cord[1]) / HEIGHT) * 10
-				x_force = ((mouse_cord[0] / WIDTH) - 0.5) * 50
+		y_force = ((HEIGHT - mouse_cord[1]) / HEIGHT) * 10
+		x_force = ((mouse_cord[0] / WIDTH) - 0.5) * 50
 
-				# Détection du côté du tir grace a la position de la souris par rapport a celle du joueur
-				mouse_cord = self.visible_groups.get_world_mouse_pos()
-				if mouse_cord[0] < self.player.rect.x:
-					x_force = -abs(x_force)  # Si à gauche du joueur, force négative (-valeur absolue)
-				else:
-					x_force = abs(x_force)   # Si à droite du joueur, force positive (valeur absolue)
+		# Détection du côté du tir grace a la position de la souris par rapport a celle du joueur
+		mouse_cord = self.visible_groups.get_world_mouse_pos()
+		if mouse_cord[0] < self.player.rect.x:
+			x_force = -abs(x_force)  # Si à gauche du joueur, force négative (-valeur absolue)
+		else:
+			x_force = abs(x_force)   # Si à droite du joueur, force positive (valeur absolue)
 
 
 
 
-				attack_time = self.current_time
-				self.ammo -= 1
-				self.attacking = True
-				self.projectille_cooldwon+=[attack_time]
-				self.current_projectille.append(
-					projectille(-y_force, x_force, user.rect.x + TILE_SIZE / 2, user.rect.y - TILE_SIZE / 2, user, self.visible_groups, self.player, self.cooldwon, self.eni_group, self.damage)
-				)
-				self.last_shot_time = pygame.time.get_ticks()
+		attack_time = self.current_time
+		self.ammo -= 1
+		self.attacking = True
+		self.projectille_cooldwon+=[attack_time]
+		self.current_projectille.append(
+			projectille(-y_force, x_force, user.rect.x + TILE_SIZE / 2, user.rect.y - TILE_SIZE / 2, user, self.visible_groups, self.player, self.cooldwon, self.eni_group, self.damage)
+		)
+		self.last_shot_time = pygame.time.get_ticks()
+		return -1
 
 
 

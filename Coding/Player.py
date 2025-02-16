@@ -15,9 +15,16 @@ class Player(Entite):
 		#====variable graphique elementaire du joueur====
 		self.player_image = pygame.Surface((TILE_SIZE,TILE_SIZE))
 		self.player_layer=1
-		self.player_status="idle"
-
 		self.effect=None
+		self.frame_index=0
+		self.animation_speed=0.5
+
+		#====variable de status du joueur====
+		self.status="right"
+		self.attacking=False
+		self.bowing=True
+		self.attack_time=pygame.time.get_ticks()
+		self.attack_side=""
 
 		#====groupe de sprite des enemie du joueur====
 		self.eni_groups=eni_groups
@@ -36,7 +43,6 @@ class Player(Entite):
 				#gestion de dash
 		self.dashing_last=[False, pygame.time.get_ticks()]
 		self.dashing=False
-		self.player_image_dash = pygame.image.load("Coding/graphics/player/dash/dash.png") 
 
 				#gestion de mouvement rapide
 		self.running=False
@@ -61,12 +67,13 @@ class Player(Entite):
 		#====variable de detection de touche====
 			#variable de detection de touche maintenue
 		self.spacebar_key_block=False
-		self.attacking=False
 		self.r_key_block=False
 
 			# variable de detection d'appuit consecutif
 		self.K_d_doubletap=[pygame.time.get_ticks() ,pygame.time.get_ticks()]
 		self.K_q_doubletap=[pygame.time.get_ticks() ,pygame.time.get_ticks()] #time de la derniere press et time du dernier lacher
+
+		self.import_player_assets()
 
 
 	def import_player_assets(self):
@@ -76,11 +83,54 @@ class Player(Entite):
     'right_idle': [], 'left_idle': [],
     'right_attack': [], 'left_attack': [],
     'right_bow': [], 'left_bow': [],
-	'dash': []
+	'right_dash': [], 'left_dash': []
 }
 		for animation in self.animations.keys():
 			full_path=chr_path+animation
 			self.animations[animation]=import_folder(full_path)
+	
+	def get_status(self):
+
+		if self.direction.x==0 :
+			if not "idle" in self.status and not "attack" in self.status and not "bow" in self.status:
+				self.status=self.status +"_idle"
+
+		
+		if self.attacking and not self.dashing:
+			if not self.bowing:
+				self.direction.x=0
+				self.direction.y=0
+				if not "attack" in self.status:
+					if "idle" in self.status:
+						#reset status
+						self.status=self.status.replace("_idle", "_attack")
+					else:
+						self.status=self.status +"_attack"
+			else:
+				self.direction.x=0
+				self.direction.y=0
+				if not "_bow" in self.status:
+					if "idle" in self.status:
+						#reset status
+						self.status=self.status.replace("_idle", "_bow")
+					else:
+						self.status=self.attack_side+"_bow"
+		else:
+			if  "attack" in self.status: 
+				self.status=self.status.replace("_attack","")
+			if  "_bow" in self.status: 
+				self.status=self.status.replace("_bow","")
+
+		if self.dashing:
+				if not "dash" in self.status:
+					if "idle" in self.status:
+						#reset status
+						self.status=self.status.replace("_idle", "_dash")
+					else:
+						self.status=self.status +"_dash"
+		else:
+			if  "_dash" in self.status: 
+				self.status=self.status.replace("_dash","")
 
 	def input(self):
 		#==============================================
@@ -93,6 +143,7 @@ class Player(Entite):
 		cliquedroit = mouse[0]
 
 		if (keys[pygame.K_q] and not self.walljump) or self.wall_jump_jump_left:
+			self.status="left"
 			if 	self.current_time -self.K_q_doubletap[0]<200 and self.current_time -self.K_q_doubletap[1]<200 and not self.q_key_block and self.current_time -self.lastwalljump_cooldown>700 and not self.wall_jump_jump_left:
 				self.dashing=True
 			self.direction.x+=-1
@@ -100,6 +151,7 @@ class Player(Entite):
 			self.q_key_block=True if not self.wall_jump_jump_left else False
 
 		if (keys[pygame.K_d] and not self.walljump) or self.wall_jump_jump_right:
+			self.status="right"
 			if 	self.current_time -self.K_d_doubletap[0]<200 and self.current_time -self.K_d_doubletap[1]<200 and not self.d_key_block and self.current_time -self.lastwalljump_cooldown>200 and not self.wall_jump_jump_right:
 				self.dashing=True
 			self.direction.x+=1
@@ -124,10 +176,16 @@ class Player(Entite):
 
 		if keys[pygame.K_e]:
 			if not self.attacking:
-				print("kll")
-				self.attack(self.eni_groups, self.rect.x+TILE_SIZE, self.rect.y, -50, (TILE_SIZE,TILE_SIZE))
-				self.attacking=True
-				self.attack_time=pygame.time.get_ticks()
+				if "left" in self.status:
+					print("gauche")
+					self.attack(self.eni_groups, self.rect.x-TILE_SIZE, self.rect.y, -50, (TILE_SIZE,TILE_SIZE))
+					self.attacking=True
+					self.attack_time=pygame.time.get_ticks()
+				elif "right" in self.status:
+					print("droite")
+					self.attack(self.eni_groups, self.rect.x+TILE_SIZE, self.rect.y, -50, (TILE_SIZE,TILE_SIZE))
+					self.attacking=True
+					self.attack_time=pygame.time.get_ticks()
 
 		if keys[pygame.K_r]:
 			if len(self.inventory.items_dict)>0 and not self.r_key_block :
@@ -135,8 +193,19 @@ class Player(Entite):
 				self.r_key_block=True
 
 		if cliquedroit:
-			if len(self.inventory.items_dict)>0:
-				self.inventory.items_dict["bow"].use_weapons(self)
+			if not self.attacking:
+				if "bow" in self.inventory.items_dict.keys():
+					self.bowing=True
+					self.attacking=True
+					self.attack_time=pygame.time.get_ticks()
+
+					# ont utilise et ont verifie le return de bow pour savoir due quel coté il lance la fleche (en fonction de la pos x de la souris)
+					self.attack_side= self.inventory.items_dict["bow"].use_weapons(self)
+					if self.attack_side<0:
+						self.attack_side="left"
+					else:
+						self.attack_side="right"
+
 
 		if not keys[pygame.K_d]:
 			if self.current_time-self.K_d_doubletap[0]<200:
@@ -159,7 +228,20 @@ class Player(Entite):
 		if not keys[pygame.K_SPACE]:
 			self.spacebar_key_block=False
 	
-		
+	def animate(self):
+		animation = self.animations[self.status]
+
+		# loop over the frame index
+		self.frame_index += self.animation_speed
+
+		if self.frame_index >= len(animation):
+			self.frame_index = 0  # Correction : @ a été mal reconnu
+
+		# set the image
+		x, y=self.rect.x, self.rect.y
+		self.image = animation[int(self.frame_index)]
+		self.rect = self.image.get_rect()
+		self.rect.topleft = (x, y)  # Position initiale du sprite
 
 	def collision_event(self):
 		#==============================================
@@ -200,11 +282,6 @@ class Player(Entite):
 		self.collision("climp_zone")
 
 		if self.dashing_last[0] and self.current_time-self.dashing_last[1]>100:
-			x, y=self.rect.x, self.rect.y
-			self.image = self.player_image  # Affectation de l'image au sprite
-			self.rect = self.image.get_rect()  # Récupère le rectangle de l'image
-			self.rect.topleft = (x, y)  # Position initiale du sprite
-			self.image.fill("white")
 			self.dashing_last[0]=False
 
 		if self.walljump==None and not self.in_jump:
@@ -215,8 +292,6 @@ class Player(Entite):
 			if self.dashing:
 				self.dashing=False
 				x, y=self.rect.x, self.rect.y
-				self.image = self.player_image_dash  # Affectation de l'image au sprite
-				self.rect = self.image.get_rect()  # Récupère le rectangle de l'image
 				self.rect.topleft = (x, y)  # Position initiale du sprite
 				for i in range(20):
 					self.rect.x += self.direction.x * PLAYER_SPEED_MULTIPLICATOR
@@ -237,8 +312,6 @@ class Player(Entite):
 				if self.dashing:
 					self.dashing=False
 					x, y=self.rect.x, self.rect.y
-					self.image = self.player_image_dash  # Affectation de l'image au sprite
-					self.rect = self.image.get_rect()  # Récupère le rectangle de l'image
 					self.rect.topleft = (x, y)  # Position initiale du sprite
 					for i in range(20):
 						self.rect.x += self.direction.x * PLAYER_SPEED_MULTIPLICATOR
@@ -263,8 +336,6 @@ class Player(Entite):
 			self.direction.y=1
 			self.rect.y += self.direction.y
 			self.collision("y")
-	
-
 
 	def apply_gravity(self):
 		#==============================================
@@ -288,8 +359,11 @@ class Player(Entite):
 			self.wall_jump_jump_left=False
 		if self.wall_jump_jump_right and self.current_time-self.wall_jump_jump_right_cooldown> JUMP_COOLDOWN*2:
 			self.wall_jump_jump_right=False
-		if self.attacking and self.attack_time-self.wall_jump_jump_right_cooldown> JUMP_COOLDOWN*2:
+		if self.attacking and self.current_time - self.attack_time > JUMP_COOLDOWN:
 			self.attacking=False
+			self.bowing=False
+			self.attack_side=""
+
 
 
 	def collision(self,Direction):
@@ -384,6 +458,8 @@ class Player(Entite):
 		self.current_time=pygame.time.get_ticks()
 		self.input()
 		self.apply_gravity()
+		self.get_status()
+		self.animate()
 		self.move()
 		self.collision_event()
 		self.all_cooldown()
