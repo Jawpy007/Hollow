@@ -54,7 +54,6 @@ class Entite(pygame.sprite.Sprite):
 		return collision_type
 
 	def death(self):
-		print(type(self))
 		if type(self)=="Player":
 			pass
 		else:
@@ -79,14 +78,12 @@ class Entite(pygame.sprite.Sprite):
 			self.stats[nom_stats]["value"] += value_update
 		else:
 			self.stats[nom_stats]["value"]+=value_update
-			print(self.stats[nom_stats]["value"])
 
 	def stats_set(self, nom_stats, value_update, max_update=None):
 		if max_update:
 			self.stats[nom_stats]["max"] = max_update
 		if value_update:
 			self.stats[nom_stats]["value"] = value_update
-			print(self, self.stats[nom_stats]["value"])
 
 	def attack(self, eni_groups, x, y, value, size=(TILE_SIZE, TILE_SIZE)):
 		hitbox = CreateHitbox(x, y, size)

@@ -22,7 +22,7 @@ class Player(Entite):
 		#====variable de status du joueur====
 		self.status="right"
 		self.attacking=False
-		self.bowing=True
+		self.bowing=False
 		self.attack_time=pygame.time.get_ticks()
 		self.attack_side=""
 
@@ -98,23 +98,24 @@ class Player(Entite):
 		
 		if self.attacking and not self.dashing:
 			if not self.bowing:
-				self.direction.x=0
-				self.direction.y=0
 				if not "attack" in self.status:
 					if "idle" in self.status:
 						#reset status
 						self.status=self.status.replace("_idle", "_attack")
 					else:
 						self.status=self.status +"_attack"
+					if  "_bow" in self.status: 
+						self.status=self.status.replace("_bow","")
+
 			else:
-				self.direction.x=0
-				self.direction.y=0
 				if not "_bow" in self.status:
 					if "idle" in self.status:
 						#reset status
 						self.status=self.status.replace("_idle", "_bow")
 					else:
 						self.status=self.attack_side+"_bow"
+					if  "attack" in self.status: 
+						self.status=self.status.replace("_attack","")
 		else:
 			if  "attack" in self.status: 
 				self.status=self.status.replace("_attack","")
@@ -177,12 +178,10 @@ class Player(Entite):
 		if keys[pygame.K_e]:
 			if not self.attacking:
 				if "left" in self.status:
-					print("gauche")
 					self.attack(self.eni_groups, self.rect.x-TILE_SIZE, self.rect.y, -50, (TILE_SIZE,TILE_SIZE))
 					self.attacking=True
 					self.attack_time=pygame.time.get_ticks()
 				elif "right" in self.status:
-					print("droite")
 					self.attack(self.eni_groups, self.rect.x+TILE_SIZE, self.rect.y, -50, (TILE_SIZE,TILE_SIZE))
 					self.attacking=True
 					self.attack_time=pygame.time.get_ticks()
@@ -363,8 +362,6 @@ class Player(Entite):
 			self.attacking=False
 			self.bowing=False
 			self.attack_side=""
-
-
 
 	def collision(self,Direction):
 		#==============================================
