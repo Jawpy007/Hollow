@@ -14,7 +14,7 @@ class CreateLevel():
 		self.level_name=LevelName
 		if self.level_name=="game_level":
 
-				
+			self.pause=False
 			self.visible_sprites = YSortCameraGroup() #Sprite Visible par le joueur exemple texture
 			self.obstacles_sprites = pygame.sprite.Group() #Sprite non Visible par le joueur exemple Hit-Box
 			self.enemy_sprites = pygame.sprite.Group() #Sprite non Visible par le joueur exemple Hit-Box
@@ -26,7 +26,9 @@ class CreateLevel():
 			self.ui=UI("game_level", game, self)
 			self.screen=Screen
 			self.create_map(WORLD_MAP)
-	
+		else:
+			self.ui=UI("main_menu", game, self)
+			self.screen=Screen
 	def create_map(self,Map):
 		img= pygame.image.load('Coding/graphics/tilemap/ground/stone.png').convert()
 		img_climp= pygame.image.load('Coding/graphics/tilemap/ground/climbable wall.png').convert()
@@ -56,10 +58,14 @@ class CreateLevel():
 						pnj(x, y, [self.visible_sprites,self.obstacles_sprites, self.clickable_items],self.obstacles_sprites)
 
 	def run(self):
-		self.visible_sprites.custom_draw(self.player)
-		self.visible_sprites.update()
-		self.ui.display(self.player)
-		
+		if self.level_name=="main_menu":
+			self.ui.display()
+		else:
+			self.visible_sprites.custom_draw(self.player)
+			if not self.pause:
+				self.visible_sprites.update()
+			self.ui.display(self.player)
+
 
 class YSortCameraGroup(pygame.sprite.Group):
 	def __init__(self):

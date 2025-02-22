@@ -6,7 +6,8 @@ TILE_SIZE=32
 
 #ui main menu
 
-PLAY_BUT_SIZE= {"x": 250, "y": 30}
+BUT_SIZE= {"x": 250, "y": 30}
+IG_MENU_SIZE=(250,250)
 
 #ui setup world
 UI_FONT="Coding/graphics/font/times.ttf"

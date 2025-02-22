@@ -35,21 +35,47 @@ class UI:
 			self.dialogue_screen = pygame.Rect(0, HEIGHT - 200, WIDTH, 200)
 			self.dialogue_pnj_name = pygame.Rect(0, HEIGHT - 200 - 50, 200, 50)
 
-		# Configuration des boutons du menu principal
-		elif self.level_type == "main_menu":
-			decalage = PLAY_BUT_SIZE["y"]  # Décalage vertical entre les boutons
-
+			#element du menu pause
+			self.menu_rect = pygame.Rect(WIDTH//2-IG_MENU_SIZE[0]//2, HEIGHT//2-IG_MENU_SIZE[1]//2, IG_MENU_SIZE[0], IG_MENU_SIZE[1])
+			decalage = 50  # Décalage vertical entre les boutons
+			bord_x=(IG_MENU_SIZE[0]-BUT_SIZE["x"])//2 #decalage par rapport au bord x
+			bord_y=30 #decalage par rapport au bord y
+			print(bord_y, bord_x)
+			
 			# Bouton "Play"
-			self.play_but = pygame.Rect(WIDTH // 2 - PLAY_BUT_SIZE["x"] // 2, HEIGHT // 2 - PLAY_BUT_SIZE["y"] // 2 + decalage * 0, PLAY_BUT_SIZE["x"], PLAY_BUT_SIZE["y"])
+			self.ig_menu_play_but = pygame.Rect(WIDTH//2-IG_MENU_SIZE[0]//2+bord_x, HEIGHT//2-IG_MENU_SIZE[1]//2+decalage*0+bord_y, BUT_SIZE["x"], BUT_SIZE["y"])
 
 			# Bouton "Options"
-			self.options_but = pygame.Rect(WIDTH // 2 - PLAY_BUT_SIZE["x"] // 2, HEIGHT // 2 - PLAY_BUT_SIZE["y"] // 2 + decalage * 1 + PLAY_BUT_SIZE["y"], PLAY_BUT_SIZE["x"], PLAY_BUT_SIZE["y"])
+			self.ig_menu_options_but = pygame.Rect(WIDTH//2-IG_MENU_SIZE[0]//2+bord_x, HEIGHT//2-IG_MENU_SIZE[1]//2+decalage*1+bord_y, BUT_SIZE["x"], BUT_SIZE["y"])
 
 			# Bouton "Charger"
-			self.charger_but = pygame.Rect(WIDTH // 2 - PLAY_BUT_SIZE["x"] // 2, HEIGHT // 2 - PLAY_BUT_SIZE["y"] // 2 + decalage * 3 + PLAY_BUT_SIZE["y"], PLAY_BUT_SIZE["x"], PLAY_BUT_SIZE["y"])
+			#self.ig_menu_charger_but = pygame.Rect(WIDTH//2-IG_MENU_SIZE[0]//2+bord_x, HEIGHT//2-IG_MENU_SIZE[1]//2+decalage*2+bord_y, BUT_SIZE["x"], BUT_SIZE["y"])
 
 			# Bouton "Quitter"
-			self.quit_but = pygame.Rect(WIDTH // 2 - PLAY_BUT_SIZE["x"] // 2, HEIGHT // 2 - PLAY_BUT_SIZE["y"] // 2 + decalage * 5 + PLAY_BUT_SIZE["y"], PLAY_BUT_SIZE["x"], PLAY_BUT_SIZE["y"])
+			self.ig_menu_quit_but = pygame.Rect(WIDTH//2-IG_MENU_SIZE[0]//2+bord_x, HEIGHT//2-IG_MENU_SIZE[1]//2+decalage*3+bord_y, BUT_SIZE["x"], BUT_SIZE["y"])
+
+			self.ig_menu_dico_buts = {
+				"Play": [self.ig_menu_play_but, "Continuer"],
+				"Options": [self.ig_menu_options_but, "Options"],
+			#	"Charger": [self.ig_menu_charger_but, "Charger"],
+				"Quitter": [self.ig_menu_quit_but, "Quitter Le Jeu"]
+			}
+
+		# Configuration des boutons du menu principal
+		elif self.level_type == "main_menu":
+			decalage = BUT_SIZE["y"]  # Décalage vertical entre les boutons
+
+			# Bouton "Play"  
+			self.play_but = pygame.Rect(WIDTH // 2 - BUT_SIZE["x"] // 2, HEIGHT // 2 - BUT_SIZE["y"] // 2 + decalage * 0, BUT_SIZE["x"], BUT_SIZE["y"])
+
+			# Bouton "Options"
+			self.options_but = pygame.Rect(WIDTH // 2 - BUT_SIZE["x"] // 2, HEIGHT // 2 - BUT_SIZE["y"] // 2 + decalage * 1 + BUT_SIZE["y"], BUT_SIZE["x"], BUT_SIZE["y"])
+
+			# Bouton "Charger"
+			self.charger_but = pygame.Rect(WIDTH // 2 - BUT_SIZE["x"] // 2, HEIGHT // 2 - BUT_SIZE["y"] // 2 + decalage * 3 + BUT_SIZE["y"], BUT_SIZE["x"], BUT_SIZE["y"])
+
+			# Bouton "Quitter"
+			self.quit_but = pygame.Rect(WIDTH // 2 - BUT_SIZE["x"] // 2, HEIGHT // 2 - BUT_SIZE["y"] // 2 + decalage * 5 + BUT_SIZE["y"], BUT_SIZE["x"], BUT_SIZE["y"])
 
 			# Dictionnaire pour stocker les boutons et leurs textes
 			self.dico_buts = {
@@ -58,6 +84,10 @@ class UI:
 				"Charger": [self.charger_but, "Charger"],
 				"Quitter": [self.quit_but, "Quitter Le Jeu"]
 			}
+
+	def affiche_menu(self):
+		pass
+		
 
 	def draw_bar(self, elem_de_bar):
 		# Récupérer les statistiques du joueur
@@ -94,16 +124,28 @@ class UI:
 
 		# Gestion des interactions dans les niveaux de jeu
 		elif self.level_type == "game_level":
-			if keys[pygame.K_ESCAPE]:
-				self.game.change_level("main_menu")
 
-		# Gestion des dialogues
-		if cliquedroit:
-			if self.in_dialogue:
-				self.current_time = pygame.time.get_ticks()
-				if self.current_time - self.last_dialogue_skip_time > 200:
-					self.next_dialogue()
-					self.last_dialogue_skip_time = pygame.time.get_ticks()
+			if keys[pygame.K_ESCAPE] and not self.K_ESCAPE_block:
+				self.level.pause=not self.level.pause
+				self.K_ESCAPE_block=True #attendre que la touche soit relacher avant de a novueau prendre cettetouiche en compte
+			if not keys[pygame.K_ESCAPE]:
+				self.K_ESCAPE_block=False
+
+			# Gestion des dialogues
+			if cliquedroit:
+				if self.in_dialogue and not not self.level.pause:
+					self.current_time = pygame.time.get_ticks()
+					if self.current_time - self.last_dialogue_skip_time > 200:
+						self.next_dialogue()
+						self.last_dialogue_skip_time = pygame.time.get_ticks()
+
+				elif self.level.pause:
+					mouse_cord = pygame.mouse.get_pos()
+					if self.ig_menu_play_but.collidepoint(mouse_cord):
+						self.level.pause=False
+					elif self.ig_menu_quit_but.collidepoint(mouse_cord):
+						pygame.quit()
+						sys.exit()		
 
 	def dialogue_start(self, pnj):
 		# Démarrer un dialogue avec un PNJ
@@ -114,7 +156,6 @@ class UI:
 			# Si le PNJ n'a pas de nouveau dialogue, afficher un dialogue générique
 			self.in_dialogue = [pnj.name, pnj.generic_dialogue_index, 0, pnj]
 			self.last_dialogue_skip_time = pygame.time.get_ticks()
-			print("kkl")
 
 	def next_dialogue(self):
 		# Passer au dialogue suivant
@@ -144,23 +185,24 @@ class UI:
 		pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
 		if self.in_dialogue==False:
 			mouse_cord = self.level.visible_sprites.get_world_mouse_pos()
-			for sprite in self.level.clickable_items:
-				if sprite.rect.collidepoint(mouse_cord):
-					if sprite.name == "Chest":
-						cursor = pygame.cursors.compile(dialogue_strings)
-						pygame.mouse.set_cursor((24, 24), (0, 0), *cursor)
-						mouse = pygame.mouse.get_pressed()
-						cliquedroit = mouse[0]
-						if cliquedroit:
-							sprite.give_items()
-					print(sprite.name in ["John"], sprite.name)
-					if sprite.name in ["John"] :
-						cursor = pygame.cursors.compile(dialogue_strings)
-						pygame.mouse.set_cursor((24, 24), (0, 0), *cursor)
-						mouse = pygame.mouse.get_pressed()
-						cliquedroit = mouse[0]
-						if cliquedroit:
-							self.dialogue_start(sprite)
+			if not self.level.pause:
+				for sprite in self.level.clickable_items:
+					if sprite.rect.collidepoint(mouse_cord):
+						if sprite.name == "Chest":
+							cursor = pygame.cursors.compile(dialogue_strings)
+							pygame.mouse.set_cursor((24, 24), (0, 0), *cursor)
+							mouse = pygame.mouse.get_pressed()
+							cliquedroit = mouse[0]
+							if cliquedroit:
+								sprite.give_items()
+						print(sprite.name in ["John"], sprite.name)
+						if sprite.name in ["John"] :
+							cursor = pygame.cursors.compile(dialogue_strings)
+							pygame.mouse.set_cursor((24, 24), (0, 0), *cursor)
+							mouse = pygame.mouse.get_pressed()
+							cliquedroit = mouse[0]
+							if cliquedroit:
+								self.dialogue_start(sprite)
 
 	def display(self, player=None):
 		# Affichage de l'UI en fonction du type de niveau
@@ -171,6 +213,15 @@ class UI:
 			self.input()
 			self.cursor_gestion()
 			self.dialogue_draw()
+			if self.level.pause:
+				pygame.draw.rect(self.display_surface, "black", self.menu_rect)
+				for but in self.ig_menu_dico_buts.values():
+					play_text = self.font.render(but[1], True, "white")
+					text_rect = play_text.get_rect(center=but[0].center)
+					self.display_surface.blit(play_text, text_rect)
+					self.input()
+
+
 		elif self.level_type == "main_menu":
 			for but in self.dico_buts.values():
 				play_text = self.font.render(but[1], True, "white")

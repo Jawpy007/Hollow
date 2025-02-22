@@ -76,6 +76,7 @@ class Player(Entite):
 		self.import_player_assets()
 
 
+
 	def import_player_assets(self):
 		chr_path="Coding/graphics/player/"
 		self.animations = {

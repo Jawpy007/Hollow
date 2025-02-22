@@ -57,6 +57,7 @@ class Entite(pygame.sprite.Sprite):
 		if type(self)=="Player":
 			pass
 		else:
+			self.player.stats_update("xp", 10)
 			self.kill()
 
 	def stats_update(self, nom_stats, value_update, max_value=None):

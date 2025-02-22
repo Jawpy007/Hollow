@@ -19,8 +19,10 @@ class CreateGame:
         pygame.display.set_caption('Hollow')
         self.clock = pygame.time.Clock()
         self.game_level= CreateLevel("game_level", self.screen, self)
-        
-
+        self.main_menu_level=CreateLevel("main_menu", self.screen, self)
+        self.selected_level="main_menu"
+        # Charger l'image
+        self.main_menu_background = pygame.image.load("Coding/graphics/background/main_menu_background.png")
     def run(self):
         while True:
             keys = pygame.key.get_pressed()
@@ -28,12 +30,16 @@ class CreateGame:
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
-
             self.screen.fill((0, 0, 0))  # Fond noir
-            self.game_level.run()
+            if self.selected_level=="main_menu":
+                self.screen.blit(self.main_menu_background, (0, 0))
+                self.main_menu_level.run()
+            else:
+                self.game_level.run()
             pygame.display.update()
             self.clock.tick(FPS)
-
+    def change_level(self,level_name):
+        self.selected_level=level_name
 if __name__ == '__main__':
     game = CreateGame()
     game.run()
