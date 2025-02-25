@@ -48,34 +48,27 @@ class CreateLevel():
 					CreateTiles(x, y, [self.obstacles_sprites], img = None)
 				if pixel == '93' or pixel == '63':
 					CreateTiles(x, y, [self.visible_sprites,self.obstacles_sprites,self.climp_zone], img_climp)
-
-
-
-
-
-
-
-				"""if Col!=VOID_CHR:
-					x = ColIndex * TILE_SIZE
-					y = LigneIndex * TILE_SIZE
-					if Col=="p":
-						self.player.rect.x=x
-						self.player.rect.y=y
-					elif Col=="m":
+				
+				if pixel=="217":
 						Belier(x, y, [self.visible_sprites, self.enemy_sprites], self.obstacles_sprites, self.player)
-					elif Col=="s":
+
+				elif pixel=="189":
 						Spectre(x, y, [self.visible_sprites,self.enemy_sprites], self.player, self.obstacles_sprites) #Instance d'un spectre
-					elif Col=="x":
-						CreateTiles(x, y, [self.visible_sprites,self.obstacles_sprites], img)
-					elif Col=="climp_wall_r":
-						CreateTiles(x, y, [self.visible_sprites,self.obstacles_sprites,self.climp_zone], img_climp, Col)
-					elif Col=="climp_wall_g":
-						CreateTiles(x, y, [self.visible_sprites,self.obstacles_sprites,self.climp_zone], img_climp, Col)
-					elif Col=="c":
-						CreateChest(x, y, [self.visible_sprites,self.obstacles_sprites, self.clickable_items], self.player, self.visible_sprites)
-					elif Col=="n":
+
+				elif pixel=="122":
 						pnj(x, y, [self.visible_sprites,self.obstacles_sprites, self.clickable_items],self.obstacles_sprites)
-						pnj(x, y, [self.visible_sprites,self.obstacles_sprites, self.clickable_items],self.obstacles_sprites)"""
+				
+				elif pixel=="160":
+						CreateChest(x, y, [self.visible_sprites,self.obstacles_sprites, self.clickable_items], self.player, self.visible_sprites)
+
+
+
+
+
+
+				
+					
+				
 
 	def run(self):
 		self.visible_sprites.custom_draw(self.player)

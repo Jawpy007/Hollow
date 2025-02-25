@@ -1,6 +1,6 @@
 import pygame, sys  # Bibliothèque pygame pour gérer le jeu, et sys pour gérer la fermeture de la fenêtre
 from Settings import *  # Importation des paramètres prédéfinis
-from Level import *  # Importation du module Level, qui gère la carte et les entités
+from Level import *  # Importation du module Level, qui gddla carte et les entités
 from Player import *
 from Enemy import Monstre  # Importation de la classe Monstre
 from Spectre import Spectre  # Import de classe Spectre
