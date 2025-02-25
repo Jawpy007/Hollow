@@ -1,3 +1,4 @@
+
 import pygame  # Bibliothèque pygame pour gérer le jeu, et sys pour gérer la fermeture de la fenêtre
 from Settings import *  # Importation des paramètres prédéfinis 
 from Player import *
@@ -8,6 +9,7 @@ from Craspeau import *
 from Ui import UI
 from pnj import pnj
 from Craspeau import Belier
+from csv_transformer import *
 
 class CreateLevel():
 	def __init__(self,LevelName,Screen, game):
@@ -30,32 +32,45 @@ class CreateLevel():
 			self.ui=UI("main_menu", game, self)
 			self.screen=Screen
 	def create_map(self,Map):
-		img= pygame.image.load('Coding/graphics/tilemap/ground/stone.png').convert()
-		img_climp= pygame.image.load('Coding/graphics/tilemap/ground/climbable wall.png').convert()
+		img_climp= pygame.image.load('Coding/graphics/tilemap/ground/stone.png').convert()
 		self.tiles_liste=[]
-		self.player = Player(0, 0, self.visible_sprites, self.enemy_sprites, self.obstacles_sprites, self.climp_zone, self.visible_sprites)  # Instance du joueur
-		for LigneIndex, Ligne in enumerate(Map):
-			for ColIndex, Col in enumerate(Ligne):
-				if Col!=VOID_CHR:
-					x = ColIndex * TILE_SIZE
-					y = LigneIndex * TILE_SIZE
-					if Col=="p":
-						self.player.rect.x=x
-						self.player.rect.y=y
-					elif Col=="m":
+		self.player = Player(200, 200, self.visible_sprites, self.enemy_sprites, self.obstacles_sprites, self.climp_zone, self.visible_sprites)  # Instance du joueur
+		
+		compt_ligne = -1
+		compt_pixel = -1
+		for ligne in WORLD_MAP:		#CREATION DE TOUTES INTERACTIONS SPECIALES
+			compt_ligne += 1
+			compt_pixel = -1
+			for pixel in ligne:
+				compt_pixel += 1
+				
+				y = compt_ligne * TILE_SIZE
+				x = compt_pixel * TILE_SIZE
+				if pixel == '62' or pixel == '60':
+					CreateTiles(x, y, [self.obstacles_sprites], img = None)
+				if pixel == '93' or pixel == '63':
+					CreateTiles(x, y, [self.visible_sprites,self.obstacles_sprites,self.climp_zone], img_climp)
+				
+				if pixel=="217":
 						Belier(x, y, [self.visible_sprites, self.enemy_sprites], self.obstacles_sprites, self.player)
-					elif Col=="s":
+
+				elif pixel=="189":
 						Spectre(x, y, [self.visible_sprites,self.enemy_sprites], self.player, self.obstacles_sprites) #Instance d'un spectre
-					elif Col=="x":
-						CreateTiles(x, y, [self.visible_sprites,self.obstacles_sprites], img)
-					elif Col=="climp_wall_r":
-						CreateTiles(x, y, [self.visible_sprites,self.obstacles_sprites,self.climp_zone], img_climp, Col)
-					elif Col=="climp_wall_g":
-						CreateTiles(x, y, [self.visible_sprites,self.obstacles_sprites,self.climp_zone], img_climp, Col)
-					elif Col=="c":
-						CreateChest(x, y, [self.visible_sprites,self.obstacles_sprites, self.clickable_items], self.player, self.visible_sprites)
-					elif Col=="n":
+
+				elif pixel=="122":
 						pnj(x, y, [self.visible_sprites,self.obstacles_sprites, self.clickable_items],self.obstacles_sprites)
+				
+				elif pixel=="160":
+						CreateChest(x, y, [self.visible_sprites,self.obstacles_sprites, self.clickable_items], self.player, self.visible_sprites)
+
+
+
+
+
+
+				
+					
+				
 
 	def run(self):
 		if self.level_name=="main_menu":
@@ -78,7 +93,7 @@ class YSortCameraGroup(pygame.sprite.Group):
 		self.offset = pygame.math.Vector2()
    
 		#création le sol
-		self.floor_surf = pygame.image.load('Coding/graphics/tilemap/ground/ground.png').convert()
+		self.floor_surf = pygame.image.load('Coding/graphics/tilemap/ground/map.png').convert()
 		self.floor_rect = self.floor_surf.get_rect(topleft = (0,0))
 		  
 	def custom_draw(self,player):
