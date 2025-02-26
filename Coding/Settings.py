@@ -55,4 +55,4 @@ VOID_CHR=" "
 
 #map setup
 
-WORLD_MAP = csv_to_list('Coding/graphics/tilemap/ground/fichiers_csv/_bordures.csv')
+WORLD_MAP = csv_to_list('Coding/graphics/tilemap/ground/fichiers_csv/_non visible.csv')

@@ -33,6 +33,7 @@ class CreateLevel():
 			self.screen=Screen
 	def create_map(self,Map):
 		img_climp= pygame.image.load('Coding/graphics/tilemap/ground/stone.png').convert()
+		img_climp2= pygame.image.load('Coding/graphics/tilemap/ground/stone.png').convert()
 		self.tiles_liste=[]
 		self.player = Player(200, 200, self.visible_sprites, self.enemy_sprites, self.obstacles_sprites, self.climp_zone, self.visible_sprites)  # Instance du joueur
 		
@@ -46,22 +47,30 @@ class CreateLevel():
 				
 				y = compt_ligne * TILE_SIZE
 				x = compt_pixel * TILE_SIZE
-				if pixel == '62' or pixel == '60':
+				
+				if pixel == '-1610612490' or pixel == '246':
 					CreateTiles(x, y, [self.obstacles_sprites], img = None)
-				if pixel == '93' or pixel == '63':
+
+				if pixel == '0':
 					CreateTiles(x, y, [self.visible_sprites,self.obstacles_sprites,self.climp_zone], img_climp)
-				
-				if pixel=="217":
-						Belier(x, y, [self.visible_sprites, self.enemy_sprites], self.obstacles_sprites, self.player)
 
-				elif pixel=="189":
-						Spectre(x, y, [self.visible_sprites,self.enemy_sprites], self.player, self.obstacles_sprites) #Instance d'un spectre
+				if pixel == '127':
+					CreateTiles(x, y, [self.visible_sprites,self.obstacles_sprites, self.climp_zone], img_climp) #changer l'image !
 
-				elif pixel=="122":
-						pnj(x, y, [self.visible_sprites,self.obstacles_sprites, self.clickable_items],self.obstacles_sprites)
+
+				elif pixel=="95":
+					CreateChest(x, y, [self.visible_sprites,self.obstacles_sprites, self.clickable_items], self.player, self.visible_sprites)
+
+				if pixel=="371":
+					Belier(x, y, [self.visible_sprites, self.enemy_sprites], self.obstacles_sprites, self.player)
+
+				elif pixel=="398":
+					Spectre(x, y, [self.visible_sprites,self.enemy_sprites], self.player, self.obstacles_sprites) #Instance d'un spectre
+
+				elif pixel=="221":
+					pnj(x, y, [self.visible_sprites,self.obstacles_sprites, self.clickable_items],self.obstacles_sprites)
 				
-				elif pixel=="160":
-						CreateChest(x, y, [self.visible_sprites,self.obstacles_sprites, self.clickable_items], self.player, self.visible_sprites)
+				
 
 
 
