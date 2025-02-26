@@ -164,7 +164,7 @@ class Player(Entite):
 				self.wall_jump_jump_right=True
 				self.wall_jump_jump_right_cooldown=pygame.time.get_ticks()
 			self.in_jump=True
-			self.jump_count=1
+			self.jump_count-=1
 			self.in_jump_time =pygame.time.get_ticks()
 			self.spacebar_key_block=True
 			self.walljump=None

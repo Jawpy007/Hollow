@@ -1,11 +1,11 @@
 dialogues_dic={ # key=name: value= all pnj dialogue list
     "John": [
         [
-            "coucou",
-            "TOM",
-            "HiYAAAAAAAAAAAAAAAAAAAAA"
+            "AVENTURIER ! AVENTURIER !",
+            "ce donjon avait été maté, mais de nouveaux monstres sont là",
+            "s'il vous plaît, aidez moi, tous mes camarades sont morts, vengez les"
         ],
-        ["jai r a dire"],
+        ["je m'en occupe n'ai crainte l'ami"],
         []
     ]
 
