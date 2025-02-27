@@ -59,6 +59,9 @@ class Spectre(Entite):
 		# Iterateur pour les sprites de morts
 		self.count_death = 0
 
+		#moove()
+		self.direction.x = 0.2
+
 		# Sprite de mort
 		self.sprites_death = []
 		self.sprites_death.append(pygame.image.load('Coding/graphics/Specter_Animation/Death/Frame1.png'))
@@ -215,13 +218,18 @@ class Spectre(Entite):
 	def idle_behavior(self):
 		"""Gère le comportement du spectre en mode inactif, en le faisant se déplacer horizontalement."""
 		# Déplace le spectre horizontalement à la vitesse définie.
-		self.rect.x += self.speed
-
+		collision = self.move()
+		zone = (self.rect.centerx-100,self.rect.centerx+100)
 		# Si le spectre sort de l'écran, inverse sa direction.
-		if self.rect.right > 1920 or self.rect.left < 0:
-			self.speed = -self.speed
+		#print(zone, self.rect.right,self.rect.left)
+		#print(collision)
+		if self.rect.right > zone[1] or self.rect.left < zone[0] or "droite" in collision or "gauche" in collision:
+			self.direction.x = -self.direction.x
+			self.image = pygame.transform.flip(self.sprites[self.current_sprite], True, False)
+			
 			
 	def death(self):
+		self.count_death += 0.125
 		if int(self.count_death) == len(self.sprites_death)-1:
 			self.player.stats_update("xp", 10)
 			self.kill()
@@ -254,5 +262,4 @@ class Spectre(Entite):
 				self.state = "idle"
 		
 		elif self.state == "dead":
-			self.count_death += 0.125
 			self.death()

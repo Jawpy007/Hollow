@@ -17,8 +17,9 @@ class Wolf(Entite):
 		self.state = "idle"
 		self.stun_timer = 0
 		self.return_timer = 0
-		self.direction.x = 0.5
+		self.direction.x = 0.2
 		self.direction.y = 0
+
 
 		self.sprites.append(pygame.image.load("Coding\graphics\Monster\Wolf\Idle\Frame1.png"))
 		self.sprites.append(pygame.image.load("Coding\graphics\Monster\Wolf\Attack\Frame1.png"))
@@ -28,7 +29,7 @@ class Wolf(Entite):
 		
 
 		self.sprites_death = []
-		self.count_sprite_death = 0
+		self.count_death = 0
 		self.sprites_death.append(pygame.image.load("Coding\graphics\Monster\Wolf\Death\Frame1.png"))
 		self.sprites_death.append(pygame.image.load("Coding\graphics\Monster\Wolf\Death\Frame2.png"))
 		self.sprites_death.append(pygame.image.load("Coding\graphics\Monster\Wolf\Death\Frame3.png"))
@@ -47,14 +48,14 @@ class Wolf(Entite):
 		self.image = self.sprites[self.current_sprite]
 
 	def distance_player(self, player):
-		"""Calcule la distance entre le spectre et le joueur."""
+		"""Calcule la distance entre le wolf et le joueur."""
 		# Calcule la différence de position en x entre le belier et le joueur.
 		dx = player.rect.centerx - self.rect.centerx
 		return dx
 
 	def detect_player(self, player):
-		"""Vérifie si le joueur est dans le rayon de détection du spectre."""
-		# Calcule la distance entre le spectre et le joueur.
+		"""Vérifie si le joueur est dans le rayon de détection du wolf."""
+		# Calcule la distance entre le wolf et le joueur.
 		distance = self.distance_player(player)
 		y = self.rect.centery
 		#debug print : print("la valeur de y est",y)
@@ -63,7 +64,7 @@ class Wolf(Entite):
 		return distance < self.detection_range and player.rect.centery in self.range
 
 	def update_attack(self):
-		print('gauche' in self.move() or 'droite' in self.move())
+		#print('gauche' in self.move() or 'droite' in self.move())
 		if 'gauche' in self.move() or 'droite' in self.move() or self.attack_timer >= 40:
 			self.state = "stun"
 		self.rect.x += self.direction.x
@@ -85,7 +86,7 @@ class Wolf(Entite):
 	def update_stun(self):
 		if self.stun_timer >= 30:
 			self.state = "return"
-			self.direction = pygame.math.Vector2()
+			
 		if self.stun_timer % 10 == 0:
 			self.image = self.sprites_stun[self.count_sprite_stun]
 			self.count_sprite_stun += 1
@@ -98,13 +99,23 @@ class Wolf(Entite):
 		self.current_sprite = 0
 		self.count_sprite_stun = 0
 		self.image = self.sprites[self.current_sprite]
-		self.direction.x = -self.direction.x
 
 		if self.return_timer >= 5:
 			self.state = "idle"
+
 		self.return_timer += 1
 
-
+	def idle_behavior(self):
+		"""Gère le comportement du wolf en mode inactif, en le faisant se déplacer horizontalement."""
+		# Déplace le wolf horizontalement à la vitesse définie.
+		collision = self.move()
+		zone = (self.rect.centerx-100,self.rect.centerx+100)
+		# Si le wolf sort de l'écran, inverse sa direction.
+		#print(zone, self.rect.right,self.rect.left)
+		#print(collision)
+		if self.rect.right > zone[1] or self.rect.left < zone[0] or "droite" in collision or "gauche" in collision:
+			self.direction.x = -self.direction.x
+			self.image = pygame.transform.flip(self.sprites[self.current_sprite], True, False)
 
 
 	def start_attack(self, player):
@@ -115,31 +126,39 @@ class Wolf(Entite):
 		# Réinitialise le compteur d'attaque.
 		self.attack_timer = 0
 
-		# Stocke la position actuelle du spectre comme position de départ.
+		# Stocke la position actuelle du wolf comme position de départ.
 		self.start_pos = (self.rect.x, self.rect.y)
 
 		# Stocke la position actuelle du joueur comme cible de l'attaque.
 		self.target_pos = (player.rect.x, player.rect.y)
 
-		print("position =",self.start_pos[0] - self.target_pos[0])
+		#print("position =",self.start_pos[0] - self.target_pos[0])
 		if self.start_pos[0] - self.target_pos[0] > 0:
 			self.direction.x = -self.direction.x
 
+	def death(self):
+		self.count_death += 0.125
+		if int(self.count_death) == len(self.sprites_death)-1:
+			self.player.stats_update("xp", 10)
+			self.kill()
+
+		self.state = "dead"
+		self.image = self.sprites_death[int(self.count_death)]
+
 	def update(self):
-		"""Met à jour le comportement du spectre en fonction de son état actuel."""
+		"""Met à jour le comportement du wolf en fonction de son état actuel."""
 		if self.state == "idle":
 			#print("Idle")
-			# Si le spectre est inactif, vérifie s'il détecte le joueur.
+			# Si le wolf est inactif, vérifie s'il détecte le joueur.
 			if self.detect_player(self.player):
 				print("Attack started")
 				self.start_attack(self.player)
 			else:
-				pass
-				"self.idle_behavior()"
+				self.idle_behavior()
 
 		elif self.state == "attack":
 			#print("Attack")
-			# Met à jour l'attaque du spectre.
+			# Met à jour l'attaque du wolf.
 			self.update_attack()
 
 		elif self.state == "stun":
@@ -147,7 +166,7 @@ class Wolf(Entite):
 			self.update_stun()
 
 		elif self.state == "return":
-			# Fait revenir le spectre à sa position initiale.
+			# Fait revenir le wolf à sa position initiale.
 			print("return")
 			self.update_return()
 		
