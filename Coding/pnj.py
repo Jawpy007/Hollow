@@ -14,6 +14,4 @@ class pnj(Entite):
         self.generic_dialogue_index=1
 
     def update(self):
-
-
-        self.move()
+        pass

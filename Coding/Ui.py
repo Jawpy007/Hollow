@@ -2,6 +2,7 @@ import pygame, sys
 from Settings import *
 from Cursor import *
 from Dialogues import *
+from pygame.math import Vector2
 
 class UI:
 	def __init__(self, level_type, game, level):
@@ -133,7 +134,7 @@ class UI:
 
 			# Gestion des dialogues
 			if cliquedroit:
-				if self.in_dialogue and not not self.level.pause:
+				if self.in_dialogue and not self.level.pause:
 					self.current_time = pygame.time.get_ticks()
 					if self.current_time - self.last_dialogue_skip_time > 200:
 						self.next_dialogue()
@@ -147,23 +148,25 @@ class UI:
 						pygame.quit()
 						sys.exit()		
 
-	def dialogue_start(self, pnj):
-		# Démarrer un dialogue avec un PNJ
-		if len(dialogues_dic[pnj.name][pnj.dialogue_states]) > 0:
-			self.in_dialogue = [pnj.name, pnj.dialogue_states, 0, pnj]
-			self.last_dialogue_skip_time = pygame.time.get_ticks()
-		else:
-			# Si le PNJ n'a pas de nouveau dialogue, afficher un dialogue générique
-			self.in_dialogue = [pnj.name, pnj.generic_dialogue_index, 0, pnj]
-			self.last_dialogue_skip_time = pygame.time.get_ticks()
+	def dialogue_start(self, dial_name, dial_states, sprite):
+		# Démarrer un dialogue 
+		self.in_dialogue = [dial_name, dial_states, 0, sprite]
+		self.last_dialogue_skip_time = pygame.time.get_ticks()
 
 	def next_dialogue(self):
 		# Passer au dialogue suivant
-		self.in_dialogue[2] += 1
-		if self.in_dialogue[2] > len(dialogues_dic[self.in_dialogue[0]][self.in_dialogue[1]]) - 1:
-			self.in_dialogue = False
-		else:
-			self.in_dialogue[3].dialogue_states += 1
+		print(self.in_dialogue[3])
+		if self.in_dialogue:
+			self.in_dialogue[2] += 1
+			
+			if self.in_dialogue[2] >= len(dialogues_dic[self.in_dialogue[0]][self.in_dialogue[1]]): #si on atteint la fin
+				if self.in_dialogue[3].dialogue_states+1 >= self.in_dialogue[3].generic_dialogue_index:
+					self.in_dialogue[3].dialogue_states=self.in_dialogue[3].generic_dialogue_index # si ont a depasser le nombre de dialogue disponnible alors ont met le meme dialogue en boucle
+					self.in_dialogue = False  # Arrêter le dialogue
+				else:
+					self.in_dialogue[3].dialogue_states+=1 # sinon ont passe a suivant
+					self.in_dialogue = False  # Arrêter le dialogue
+
 
 	def dialogue_draw(self):
 		# Dessiner le dialogue à l'écran
@@ -194,15 +197,26 @@ class UI:
 							mouse = pygame.mouse.get_pressed()
 							cliquedroit = mouse[0]
 							if cliquedroit:
-								sprite.give_items()
-						print(sprite.name in ["John"], sprite.name)
+								# Calcul de la distance entre le joueur et le coffre
+								player_pos = Vector2(self.level.player.rect.center)
+								chest_pos = Vector2(sprite.rect.center)
+								distance = player_pos.distance_to(chest_pos)
+
+								# Si la distance est supérieure à 20, on ne fait rien
+								if not distance > 60:
+									sprite.give_items() # focntion de CreateChest (une class de du fichier Tile) qui donne l'item qui est dans le coffre si le coffre n'est pas deja ouvert
+									dial_state=sprite.dialogue_states
+									dial_name=sprite.item_name
+									self.dialogue_start(dial_name,dial_state, sprite)
 						if sprite.name in ["John"] :
 							cursor = pygame.cursors.compile(dialogue_strings)
 							pygame.mouse.set_cursor((24, 24), (0, 0), *cursor)
 							mouse = pygame.mouse.get_pressed()
 							cliquedroit = mouse[0]
 							if cliquedroit:
-								self.dialogue_start(sprite)
+								dial_state=sprite.dialogue_states
+								dial_name=sprite.name
+								self.dialogue_start(dial_name,dial_state,sprite)
 
 	def display(self, player=None):
 		# Affichage de l'UI en fonction du type de niveau

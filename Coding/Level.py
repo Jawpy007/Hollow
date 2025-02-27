@@ -24,7 +24,7 @@ class CreateLevel():
 			self.climp_zone=pygame.sprite.Group()
 			self.clickable_items=pygame.sprite.Group()
 			self.collectable_items=pygame.sprite.Group()
-
+			
 			self.ui=UI("game_level", game, self)
 			self.screen=Screen
 			self.create_map(WORLD_MAP)
@@ -36,7 +36,7 @@ class CreateLevel():
 		img_climp2= pygame.image.load('Coding/graphics/tilemap/ground/stone.png').convert()
 		self.tiles_liste=[]
 		self.player = Player(200, 200, self.visible_sprites, self.enemy_sprites, self.obstacles_sprites, self.climp_zone, self.visible_sprites)  # Instance du joueur
-		
+		self.level_chest=[[melee_weapons("sword", -10, 0),"sword"], [ranged_weapons("bow", -10, 1000, 100, 100,100, self.visible_sprites, 5, self.player, self.player.eni_groups),"bow"]]
 		compt_ligne = -1
 		compt_pixel = -1
 		for ligne in WORLD_MAP:		#CREATION DE TOUTES INTERACTIONS SPECIALES
@@ -52,14 +52,15 @@ class CreateLevel():
 					CreateTiles(x, y, [self.obstacles_sprites], img = None)
 
 				if pixel == '0':
-					CreateTiles(x, y, [self.visible_sprites,self.obstacles_sprites,self.climp_zone], img_climp)
+					CreateTiles(x, y, [self.visible_sprites,self.obstacles_sprites,self.climp_zone], img_climp, "climp_wall_g")
 
 				if pixel == '127':
-					CreateTiles(x, y, [self.visible_sprites,self.obstacles_sprites, self.climp_zone], img_climp) #changer l'image !
+					CreateTiles(x, y, [self.visible_sprites,self.obstacles_sprites, self.climp_zone], img_climp, "climp_wall_r") #changer l'image !
 
 
 				elif pixel=="95":
-					CreateChest(x, y, [self.visible_sprites,self.obstacles_sprites, self.clickable_items], self.player, self.visible_sprites)
+					CreateChest(x, y, [self.visible_sprites,self.obstacles_sprites, self.clickable_items], self.player, self.visible_sprites, self.level_chest[-1][0],self.level_chest[-1][1])
+					self.level_chest.pop()
 
 				if pixel=="371":
 					Belier(x, y, [self.visible_sprites, self.enemy_sprites], self.obstacles_sprites, self.player)

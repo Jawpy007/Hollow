@@ -19,9 +19,10 @@ class CreateTiles(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(topleft = (x,y))
     
 class CreateChest(pygame.sprite.Sprite):
-    def __init__(self, x, y, groups, player,visible_groups, item_name="bow"):
+    def __init__(self, x, y, groups, player,visible_groups, item, item_name):
         super().__init__(groups)  # Initialisation de la classe parent
         # Charger l'image depuis le fichier
+        self.item=item
         self.item_name=item_name
         self.image = pygame.image.load("Coding/graphics/tilemap/ground/chest.png")
         self.image = pygame.transform.scale(self.image, (TILE_SIZE, TILE_SIZE))  # Redimensionner
@@ -31,10 +32,15 @@ class CreateChest(pygame.sprite.Sprite):
         self.oppened=False
         self.visible_groups=visible_groups
 
+        # gestrion de la boite de dialogue qui s'affiche quand ont recupere l'objet
+        self.dialogue_states=0 #index du dialogue qui annonce la recuperation de l'objet
+        self.generic_dialogue_index=1 
+
+
     def give_items(self):
         if not self.oppened:
             self.image = pygame.image.load("Coding/graphics/tilemap/ground/chest_open.png")
             self.image = pygame.transform.scale(self.image, (TILE_SIZE, TILE_SIZE))  # Redimensionner
             self.name="Chest"
-            self.player.inventory.add_items(ranged_weapons("self.item_name", -10, 1000, 100, 100,100, self.visible_groups, 5, self.player, self.player.eni_groups), "bow")
+            self.player.inventory.add_items(self.item, self.item_name)
             self.oppened=True

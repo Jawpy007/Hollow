@@ -174,14 +174,15 @@ class Player(Entite):
 
 		if keys[pygame.K_e]:
 			if not self.attacking:
-				if "left" in self.status:
-					self.attack(self.eni_groups, self.rect.x-TILE_SIZE, self.rect.y, -50, (TILE_SIZE,TILE_SIZE))
-					self.attacking=True
-					self.attack_time=pygame.time.get_ticks()
-				elif "right" in self.status:
-					self.attack(self.eni_groups, self.rect.x+TILE_SIZE, self.rect.y, -50, (TILE_SIZE,TILE_SIZE))
-					self.attacking=True
-					self.attack_time=pygame.time.get_ticks()
+				if "sword" in self.inventory.items_dict.keys():
+					if "left" in self.status:
+						self.attack(self.eni_groups, self.rect.x-TILE_SIZE+10, self.rect.y, -50, (TILE_SIZE+10,TILE_SIZE))
+						self.attacking=True
+						self.attack_time=pygame.time.get_ticks()
+					elif "right" in self.status:
+						self.attack(self.eni_groups, self.rect.x+TILE_SIZE-10, self.rect.y, -50, (TILE_SIZE+10,TILE_SIZE))
+						self.attacking=True
+						self.attack_time=pygame.time.get_ticks()
 
 		if keys[pygame.K_r]:
 			if len(self.inventory.items_dict)>0 and not self.r_key_block :
