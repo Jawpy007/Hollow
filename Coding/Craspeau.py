@@ -16,6 +16,7 @@ class Wolf(Entite):
 		
 		self.state = "idle"
 		self.stun_timer = 0
+		self.return_timer = 0
 		self.direction.x = 0.5
 		self.direction.y = 0
 
@@ -84,6 +85,7 @@ class Wolf(Entite):
 	def update_stun(self):
 		if self.stun_timer >= 30:
 			self.state = "return"
+			self.direction = pygame.math.Vector2()
 		if self.stun_timer % 10 == 0:
 			self.image = self.sprites_stun[self.count_sprite_stun]
 			self.count_sprite_stun += 1
@@ -94,8 +96,15 @@ class Wolf(Entite):
 
 	def update_return(self):
 		self.current_sprite = 0
+		self.count_sprite_stun = 0
 		self.image = self.sprites[self.current_sprite]
 		self.direction.x = -self.direction.x
+
+		if self.return_timer >= 5:
+			self.state = "idle"
+		self.return_timer += 1
+
+
 
 
 	def start_attack(self, player):
