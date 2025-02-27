@@ -8,7 +8,7 @@ from tile import *
 from Craspeau import *
 from Ui import UI
 from pnj import pnj
-from Craspeau import Belier
+from Craspeau import Wolf
 from csv_transformer import *
 
 class CreateLevel():
@@ -63,7 +63,7 @@ class CreateLevel():
 					self.level_chest.pop()
 
 				if pixel=="371":
-					Belier(x, y, [self.visible_sprites, self.enemy_sprites], self.obstacles_sprites, self.player)
+					Wolf(x, y, [self.visible_sprites, self.enemy_sprites], self.obstacles_sprites, self.player)
 
 				elif pixel=="398":
 					Spectre(x, y, [self.visible_sprites,self.enemy_sprites], self.player, self.obstacles_sprites) #Instance d'un spectre
