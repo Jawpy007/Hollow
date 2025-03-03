@@ -57,7 +57,7 @@ class UI:
 
 			self.ig_menu_dico_buts = {
 				"Play": [self.ig_menu_play_but, "Continuer"],
-				"Options": [self.ig_menu_options_but, "Options"],
+			#	"Options": [self.ig_menu_options_but, "Options"],
 			#	"Charger": [self.ig_menu_charger_but, "Charger"],
 				"Quitter": [self.ig_menu_quit_but, "Quitter Le Jeu"]
 			}

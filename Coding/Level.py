@@ -71,16 +71,6 @@ class CreateLevel():
 				elif pixel=="221":
 					pnj(x, y, [self.visible_sprites,self.obstacles_sprites, self.clickable_items],self.obstacles_sprites)
 				
-				
-
-
-
-
-
-
-				
-					
-				
 
 	def run(self):
 		if self.level_name=="main_menu":
