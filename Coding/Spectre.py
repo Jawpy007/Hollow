@@ -153,7 +153,7 @@ class Spectre(Entite):
 		if self.distance_player(self.player) < self.attack_radius and not self.hit:
 			print("Tapé")
 			# Attaque le joueur en réduisant ses points de vie.
-			self.attack([self.player], self.rect.x, self.rect.y, -5)
+			self.attack([self.player], self.rect.x, self.rect.y, -20)
 			self.hit = True
 
 		# Met à jour l'animation toutes les 10 frames.

@@ -1,5 +1,6 @@
 import pygame
 from Settings import *
+from Player import *
 
 # La classe Entite hérite de pygame.sprite.Sprite, ce qui signifie qu'elle peut être utilisée comme un sprite dans Pygame.
 class Entite(pygame.sprite.Sprite):
@@ -60,13 +61,11 @@ class Entite(pygame.sprite.Sprite):
 
     def death(self):
         # Gère la mort de l'entité
-        if type(self) == "Player":
-            pass  # Le joueur a un comportement spécifique à la mort
-        else:
-            self.player.stats_update("xp", 10)  # Ajoute de l'expérience au joueur
-            self.kill()  # Supprime l'entité
+        self.player.stats_update("xp", 10)  # Ajoute de l'expérience au joueur
+        self.kill()  # Supprime l'entité
 
     def stats_update(self, nom_stats, value_update, max_value=None):
+        print
         # Met à jour les statistiques de l'entité
         if max_value is not None:
             self.stats[nom_stats]["max_value"] = max_value
